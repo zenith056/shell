@@ -2,7 +2,7 @@
 // Shows power consumption/charging rate in watts.
 import QtQuick
 import QtQuick.Layouts
-import "../../../config"
+import "../../../Commons"
 import "../../../services"
 
 RowLayout {

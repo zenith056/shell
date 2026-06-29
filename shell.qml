@@ -4,7 +4,7 @@ import Quickshell
 import Quickshell.Services.UPower
 import Quickshell.Services.Pipewire
 import QtQuick
-import "config"
+import "Commons"
 import "services"
 import "modules/bar"
 

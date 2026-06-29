@@ -2,7 +2,7 @@
 // Shows time by default, toggles to date on click.
 import QtQuick
 import "../../services"
-import "../../config"
+import "../../Commons"
 
 Text {
     id: clock

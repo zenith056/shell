@@ -30,12 +30,12 @@
 - Prefer `readonly property` for constants.
 - Use descriptive `id` values that reflect the component's role.
 - Use `RowLayout` with `Layout.alignment: Qt.AlignVCenter` instead of `Row` when children have different heights and need vertical centering. `Row` aligns children to the top by default, which causes visual misalignment when items vary in size.
-- **All colors must come from `Colors` singleton.** No hardcoded hex values in QML files. If a color is missing, add it to `config/Colors.qml` first.
+- **All colors must come from `Color` singleton in Commons.** No hardcoded hex values in QML files. If a color is missing, add it to `Commons/Color.qml` first.
 - **No borders.** Popups and UI elements must not use `border.color` or `border.width`.
 
 ## Architecture
 
-- **config/** — Global configuration singletons (colors, bar settings, JSON loader).
+- **Commons/** — Shared singletons (Color, Style, Util, BarConfig, Config). Module: `qs.Commons`.
 - **services/** — System integration singletons (battery, network, audio, time).
 - **modules/** — UI feature modules organized by component (e.g., `bar/`).
 - **utils/** — Shared helpers (paths, icons).

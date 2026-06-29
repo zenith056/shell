@@ -2,7 +2,7 @@
 // Shows battery health percentage, energy capacity, and device model.
 import QtQuick
 import QtQuick.Layouts
-import "../../../config"
+import "../../../Commons"
 import "../../../services"
 
 ColumnLayout {

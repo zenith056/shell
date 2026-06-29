@@ -3,7 +3,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import "../../../config"
+import "../../../Commons"
 import "../../../services"
 import ".."
 
@@ -18,7 +18,7 @@ PopupWindow {
     height: 320
 
     // Background color matching bar
-    color: Colors.background
+    color: Color.background
 
     // Close when clicking outside
     onVisibleChanged: {
@@ -47,7 +47,7 @@ PopupWindow {
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 1
-                color: Colors.divider
+                color: Color.divider
             }
 
             // Power section (watts)
@@ -59,7 +59,7 @@ PopupWindow {
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 1
-                color: Colors.divider
+                color: Color.divider
             }
 
             // Health section (health, capacity, model)

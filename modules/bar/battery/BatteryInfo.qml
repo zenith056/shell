@@ -2,7 +2,7 @@
 // Shows large icon, percentage, and charging status.
 import QtQuick
 import QtQuick.Layouts
-import "../../../config"
+import "../../../Commons"
 import "../../../services"
 
 ColumnLayout {
@@ -35,7 +35,7 @@ ColumnLayout {
     // Charging status
     Text {
         text: charging ? "Charging" : "Discharging"
-        color: charging ? Colors.success : Colors.error
+        color: charging ? Color.success : Color.error
         font.family: BarConfig.fontFamily
         font.pixelSize: 12
         Layout.alignment: Qt.AlignHCenter

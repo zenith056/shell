@@ -2,7 +2,7 @@
 // Shows a connection icon and SSID name when connected.
 import QtQuick
 import "../../services"
-import "../../config"
+import "../../Commons"
 
 Row {
     id: network

@@ -1,4 +1,0 @@
-module Config
-singleton Colors 1.0 Colors.qml
-singleton BarConfig 1.0 BarConfig.qml
-Config 1.0 Config.qml

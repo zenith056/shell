@@ -2,7 +2,7 @@
 // Shows workspace numbers from niri: white for active, gray for inactive.
 import QtQuick
 import "../../services"
-import "../../config"
+import "../../Commons"
 
 Row {
     id: workspaces
@@ -17,7 +17,7 @@ Row {
 
         Text {
             text: index + 1
-            color: index + 1 === workspaces.current ? Colors.activeWorkspace : Colors.inactiveWorkspace
+            color: index + 1 === workspaces.current ? Color.activeWorkspace : Color.inactiveWorkspace
             font.family: BarConfig.fontFamily
             font.pixelSize: BarConfig.fontSize
             verticalAlignment: Text.AlignVCenter

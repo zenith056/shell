@@ -1,7 +1,7 @@
 // Battery indicator widget for the status bar.
 // Shows a battery icon and opens a popup with detailed info on click.
 import QtQuick
-import "../../config"
+import "../../Commons"
 import "../../services"
 import "battery"
 

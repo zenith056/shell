@@ -5,7 +5,7 @@ import Quickshell
 import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
-import "../../config"
+import "../../Commons"
 import "../../services"
 import Quickshell.Services.UPower
 import Quickshell.Services.Pipewire
