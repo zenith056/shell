@@ -1,5 +1,5 @@
 // Battery popup component.
-// Displays detailed battery information when indicator is clicked.
+// Displays battery info with power profile selector.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -11,17 +11,14 @@ PopupWindow {
     id: batteryPopup
 
     property bool isOpen: false
-    property Item anchorItem: null
 
     visible: isOpen
     grabFocus: true
-    implicitWidth: 280
-    implicitHeight: 320
+    implicitWidth: 300
+    implicitHeight: 280
 
-    // Background color matching bar
     color: Color.background
 
-    // Close when clicking outside
     onVisibleChanged: {
         if (!visible) {
             isOpen = false;
@@ -32,16 +29,101 @@ PopupWindow {
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 16
-        spacing: 16
+        spacing: 12
 
-        // Escape key handler inside content
         Keys.onEscapePressed: {
             batteryPopup.hide();
         }
 
-        // Battery info section (icon, percentage, status)
-        BatteryInfo {
+        // Header: Icon + Percentage
+        RowLayout {
             Layout.fillWidth: true
+            spacing: 8
+
+            Text {
+                text: Battery.statusIcon()
+                color: Color.text
+                font.family: BarConfig.fontFamily
+                font.pixelSize: 24
+            }
+
+            Item { Layout.fillWidth: true }
+
+            Text {
+                text: Math.round(Battery.percentage * 100) + "%"
+                color: Color.text
+                font.family: BarConfig.fontFamily
+                font.pixelSize: 20
+                font.bold: true
+            }
+        }
+
+        // Battery bar
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 6
+            color: Color.divider
+
+            Rectangle {
+                width: parent.width * Battery.percentage
+                height: parent.height
+                color: Battery.charging ? "#4ade80" : "#ffffff"
+            }
+        }
+
+        // Battery size and time left
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 8
+
+            Text {
+                text: "Battery size " + Math.round(Battery.energyCapacity) + "Wh"
+                color: Color.text
+                font.family: BarConfig.fontFamily
+                font.pixelSize: 11
+            }
+
+            Item { Layout.fillWidth: true }
+
+            Text {
+                text: {
+                    if (Battery.timeToFull > 0) {
+                        var hours = Math.floor(Battery.timeToFull / 3600);
+                        var mins = Math.floor((Battery.timeToFull % 3600) / 60);
+                        return "Time left: " + hours + "h " + mins + "m";
+                    } else if (Battery.timeToEmpty > 0) {
+                        var hours = Math.floor(Battery.timeToEmpty / 3600);
+                        var mins = Math.floor((Battery.timeToEmpty % 3600) / 60);
+                        return "Time left: " + hours + "h " + mins + "m";
+                    }
+                    return "Time left: --";
+                }
+                color: Color.text
+                font.family: BarConfig.fontFamily
+                font.pixelSize: 11
+            }
+        }
+
+        // Threshold and status
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 8
+
+            Text {
+                text: "Threshold 95-100%"
+                color: Color.text
+                font.family: BarConfig.fontFamily
+                font.pixelSize: 11
+            }
+
+            Item { Layout.fillWidth: true }
+
+            Text {
+                text: (Battery.charging ? "Charging" : "Discharging") + " " + Math.abs(Battery.changeRate).toFixed(1) + "W"
+                color: Color.text
+                font.family: BarConfig.fontFamily
+                font.pixelSize: 11
+            }
         }
 
         // Divider
@@ -51,34 +133,56 @@ PopupWindow {
             color: Color.divider
         }
 
-        // Power section (watts)
-        BatteryWatts {
-            Layout.fillWidth: true
+        // Power profile label
+        Text {
+            text: "Power Profile"
+            color: Color.text
+            font.family: BarConfig.fontFamily
+            font.pixelSize: 12
+            font.bold: true
         }
 
-        // Divider
-        Rectangle {
+        // Power profile buttons
+        RowLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: 1
-            color: Color.divider
-        }
+            spacing: 8
 
-        // Health section (health, capacity, model)
-        BatteryHealth {
-            Layout.fillWidth: true
-        }
+            Repeater {
+                model: ["Power Saver", "Balanced", "Performance"]
 
-        // Spacer
-        Item {
-            Layout.fillHeight: true
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 32
+                    radius: 6
+                    color: profileArea.containsMouse ? Color.divider : "transparent"
+                    border.color: Color.divider
+                    border.width: 1
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: modelData
+                        color: Color.text
+                        font.family: BarConfig.fontFamily
+                        font.pixelSize: 10
+                    }
+
+                    MouseArea {
+                        id: profileArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            // TODO: implement power profile switching
+                        }
+                    }
+                }
+            }
         }
     }
 
-    // Function to show the popup below the bar
+    // Show popup below the bar
     function show(anchorWindow, anchorButtonItem) {
-        // Get position of the button in window coordinates
         var pos = anchorButtonItem.mapToItem(anchorWindow.contentItem, 0, 0);
-        // Position popup below the bar, centered on the button
         anchor.window = anchorWindow;
         anchor.rect = Qt.rect(
             pos.x + anchorButtonItem.width / 2 - implicitWidth / 2,
@@ -90,9 +194,9 @@ PopupWindow {
         visible = true;
     }
 
-    // Function to hide the popup
+    // Hide the popup
     function hide() {
         isOpen = false;
-        visible = false;
+        visible = false
     }
 }
