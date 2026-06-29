@@ -14,8 +14,8 @@ PopupWindow {
 
     visible: isOpen
     grabFocus: true
-    implicitWidth: 300
-    implicitHeight: 260
+    implicitWidth: 400
+    implicitHeight: 320
 
     color: Color.background
 
@@ -28,8 +28,8 @@ PopupWindow {
     // Content container
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 16
-        spacing: 12
+        anchors.margins: 20
+        spacing: 16
 
         Keys.onEscapePressed: {
             batteryPopup.hide();
@@ -38,13 +38,13 @@ PopupWindow {
         // Header: Icon + Percentage
         RowLayout {
             Layout.fillWidth: true
-            spacing: 8
+            spacing: 12
 
             Text {
                 text: Battery.statusIcon()
                 color: Color.text
                 font.family: BarConfig.fontFamily
-                font.pixelSize: 24
+                font.pixelSize: 40
             }
 
             Item { Layout.fillWidth: true }
@@ -53,7 +53,7 @@ PopupWindow {
                 text: Math.round(Battery.percentage * 100) + "%"
                 color: Color.text
                 font.family: BarConfig.fontFamily
-                font.pixelSize: 20
+                font.pixelSize: 32
                 font.bold: true
             }
         }
@@ -61,7 +61,7 @@ PopupWindow {
         // Battery bar
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 6
+            Layout.preferredHeight: 8
             color: Color.divider
 
             Rectangle {
@@ -74,13 +74,13 @@ PopupWindow {
         // Battery size and time left
         RowLayout {
             Layout.fillWidth: true
-            spacing: 8
+            spacing: 12
 
             Text {
                 text: "Battery size " + Math.round(Battery.energyCapacity) + "Wh"
                 color: Color.text
                 font.family: BarConfig.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: 14
             }
 
             Item { Layout.fillWidth: true }
@@ -100,20 +100,20 @@ PopupWindow {
                 }
                 color: Color.text
                 font.family: BarConfig.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: 14
             }
         }
 
         // Threshold and status
         RowLayout {
             Layout.fillWidth: true
-            spacing: 8
+            spacing: 12
 
             Text {
                 text: "Threshold 95-100%"
                 color: Color.text
                 font.family: BarConfig.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: 14
             }
 
             Item { Layout.fillWidth: true }
@@ -122,7 +122,7 @@ PopupWindow {
                 text: (Battery.charging ? "Charging" : "Discharging") + " " + Math.abs(Battery.changeRate).toFixed(1) + "W"
                 color: Color.text
                 font.family: BarConfig.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: 14
             }
         }
 
@@ -138,37 +138,50 @@ PopupWindow {
             text: "Power Profile"
             color: Color.text
             font.family: BarConfig.fontFamily
-            font.pixelSize: 12
+            font.pixelSize: 16
             font.bold: true
         }
 
         // Power profile buttons
         RowLayout {
             Layout.fillWidth: true
-            spacing: 8
+            spacing: 12
 
             Repeater {
-                model: PowerProfile.profiles
+                model: [
+                    { name: "power-saver", label: "Power Saver", icon: "\uf0e7" },
+                    { name: "balanced", label: "Balanced", icon: "\uf0e8" },
+                    { name: "performance", label: "Performance", icon: "\uf135" }
+                ]
 
                 Rectangle {
-                    property string profileName: modelData
+                    property string profileName: modelData.name
                     property bool isActive: PowerProfile.activeProfile === profileName
 
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 32
-                    radius: 6
-                    color: isActive ? "#ffffff" : (btnArea.containsMouse ? "#333333" : "transparent")
+                    Layout.preferredHeight: 40
+                    radius: 8
+                    color: isActive ? "#ffffff" : (btnArea.containsMouse ? "#333333" : "#1a1a1a")
                     border.color: "#444444"
                     border.width: 1
 
-                    Text {
+                    RowLayout {
                         anchors.centerIn: parent
-                        text: profileName === "power-saver" ? "Power Saver"
-                            : profileName === "balanced" ? "Balanced"
-                            : "Performance"
-                        color: isActive ? "#000000" : Color.text
-                        font.family: BarConfig.fontFamily
-                        font.pixelSize: 10
+                        spacing: 8
+
+                        Text {
+                            text: modelData.icon
+                            color: isActive ? "#000000" : Color.text
+                            font.family: BarConfig.fontFamily
+                            font.pixelSize: 14
+                        }
+
+                        Text {
+                            text: modelData.label
+                            color: isActive ? "#000000" : Color.text
+                            font.family: BarConfig.fontFamily
+                            font.pixelSize: 12
+                        }
                     }
 
                     MouseArea {
