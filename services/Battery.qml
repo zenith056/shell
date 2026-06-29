@@ -29,7 +29,6 @@ Singleton {
     // Battery health percentage (0-100)
     property real healthPercentage: {
         if (!UPower.displayDevice) return 0;
-        // Try healthPercentage first, fallback to calculating from energy/energyCapacity
         var health = UPower.displayDevice.healthPercentage;
         if (health > 0) return health;
         if (energyCapacity > 0) return (energy / energyCapacity) * 100;
@@ -41,15 +40,15 @@ Singleton {
     // Returns a Nerd Font glyph based on current charge level
     function statusIcon(): string {
         if (!available)
-            return "󱃌"; // nf-md-battery_outline — no battery detected
+            return "\uf590";     // nf-md-battery_outline
         if (charging)
-            return ""; // nf-md-battery_charging — charging state
+            return "\uf0e7";     // nf-md-battery_charging
         if (percentage > 0.75)
-            return ""; // nf-md-battery — full/high charge
+            return "\uf578";     // nf-md-battery
         if (percentage > 0.50)
-            return ""; // nf-md-battery_60 — medium charge
+            return "\uf577";     // nf-md-battery_60
         if (percentage > 0.25)
-            return ""; // nf-md-battery_10 — critical charge
-        return ""; // nf-md-battery_10 — critical charge
+            return "\uf576";     // nf-md-battery_40
+        return "\uf575";         // nf-md-battery_20
     }
 }

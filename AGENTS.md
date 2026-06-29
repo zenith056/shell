@@ -33,6 +33,8 @@
 - Use `implicitWidth`/`implicitHeight` instead of `width`/`height` for components.
 - **All colors must come from `Color` singleton in Commons.** No hardcoded hex values in QML files.
 - **No borders.** Popups and UI elements must not use `border.color` or `border.width`.
+- **Nerd Font glyphs must use Unicode escapes** (e.g., `\uf028`) not raw characters.
+- **Always test before committing.** Run `quickshell -c ~/projects/shell` to verify no errors.
 
 ## Architecture
 
