@@ -73,11 +73,9 @@ PopupWindow {
         }
     }
 
-    // Function to show the popup at a specific position
-    function show(parentWindow, x, y) {
-        anchor.window = parentWindow;
-        anchor.rect.x = x;
-        anchor.rect.y = y;
+    // Function to show the popup anchored to an item
+    function show(anchorItem) {
+        anchor.item = anchorItem;
         isOpen = true;
         visible = true;
     }
