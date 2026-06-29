@@ -17,7 +17,7 @@ Row {
 
         Text {
             text: index + 1
-            color: index + 1 === workspaces.current ? "#FFFFFF" : "#666666"
+            color: index + 1 === workspaces.current ? Colors.activeWorkspace : Colors.inactiveWorkspace
             font.family: BarConfig.fontFamily
             font.pixelSize: BarConfig.fontSize
             verticalAlignment: Text.AlignVCenter

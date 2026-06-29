@@ -30,6 +30,8 @@
 - Prefer `readonly property` for constants.
 - Use descriptive `id` values that reflect the component's role.
 - Use `RowLayout` with `Layout.alignment: Qt.AlignVCenter` instead of `Row` when children have different heights and need vertical centering. `Row` aligns children to the top by default, which causes visual misalignment when items vary in size.
+- **All colors must come from `Colors` singleton.** No hardcoded hex values in QML files. If a color is missing, add it to `config/Colors.qml` first.
+- **No borders.** Popups and UI elements must not use `border.color` or `border.width`.
 
 ## Architecture
 

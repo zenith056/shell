@@ -20,6 +20,16 @@ Singleton {
     property int timeToFull: UPower.displayDevice ? UPower.displayDevice.timeToFull : 0
     // Estimated seconds until empty
     property int timeToEmpty: UPower.displayDevice ? UPower.displayDevice.timeToEmpty : 0
+    // Rate of energy change in watts (positive when charging, negative when discharging)
+    property real changeRate: UPower.displayDevice ? UPower.displayDevice.changeRate : 0
+    // Current energy level in watt-hours
+    property real energy: UPower.displayDevice ? UPower.displayDevice.energy : 0
+    // Maximum energy capacity in watt-hours
+    property real energyCapacity: UPower.displayDevice ? UPower.displayDevice.energyCapacity : 0
+    // Battery health percentage
+    property real healthPercentage: UPower.displayDevice ? UPower.displayDevice.healthPercentage : 0
+    // Device model name
+    property string model: UPower.displayDevice ? UPower.displayDevice.model : "Unknown"
 
     // Returns a Nerd Font glyph based on current charge level
     function statusIcon(): string {

@@ -1,0 +1,5 @@
+module Battery
+BatteryInfo 1.0 BatteryInfo.qml
+BatteryPopup 1.0 BatteryPopup.qml
+BatteryWatts 1.0 BatteryWatts.qml
+BatteryHealth 1.0 BatteryHealth.qml

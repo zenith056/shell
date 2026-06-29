@@ -1,9 +1,9 @@
 // Battery indicator widget for the status bar.
-// Shows a battery icon and percentage text.
-// Displays "N/A" when no battery is detected.
+// Shows a battery icon and opens a popup with detailed info on click.
 import QtQuick
 import "../../config"
 import "../../services"
+import "battery"
 
 Row {
     id: battery
@@ -23,13 +23,23 @@ Row {
         verticalAlignment: Text.AlignVCenter
     }
 
-    // Percentage text — hidden when no battery
-    //Text {
-    //    text: available ? Math.round(percentage * 100) + "%" : "N/A"
-    //    color: BarConfig.textColor
-    //    font.family: BarConfig.fontFamily
-    //    font.pixelSize: BarConfig.fontSize
-    //    verticalAlignment: Text.AlignVCenter
-    //    visible: available
-    //}
+    // Click target for the entire indicator
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: {
+            if (batteryPopup.isOpen) {
+                batteryPopup.hide();
+            } else {
+                // Calculate position below the indicator
+                var globalPos = mapToItem(null, width / 2, height);
+                batteryPopup.show(bar, globalPos.x - batteryPopup.width / 2, globalPos.y + 4);
+            }
+        }
+    }
+
+    // Battery popup instance
+    BatteryPopup {
+        id: batteryPopup
+    }
 }
