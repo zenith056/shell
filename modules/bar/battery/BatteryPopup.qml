@@ -14,8 +14,8 @@ PopupWindow {
 
     visible: isOpen
     grabFocus: true
-    width: 280
-    height: 320
+    implicitWidth: 280
+    implicitHeight: 320
 
     // Background color matching bar
     color: Color.background
@@ -27,50 +27,50 @@ PopupWindow {
         }
     }
 
-    // Escape key dismissal
-    Keys.onEscapePressed: {
-        hide();
-    }
-
     // Content container
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 16
         spacing: 16
 
-            // Battery info section (icon, percentage, status)
-            BatteryInfo {
-                Layout.fillWidth: true
-            }
+        // Escape key handler inside content
+        Keys.onEscapePressed: {
+            batteryPopup.hide();
+        }
 
-            // Divider
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: Color.divider
-            }
+        // Battery info section (icon, percentage, status)
+        BatteryInfo {
+            Layout.fillWidth: true
+        }
 
-            // Power section (watts)
-            BatteryWatts {
-                Layout.fillWidth: true
-            }
+        // Divider
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: Color.divider
+        }
 
-            // Divider
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: Color.divider
-            }
+        // Power section (watts)
+        BatteryWatts {
+            Layout.fillWidth: true
+        }
 
-            // Health section (health, capacity, model)
-            BatteryHealth {
-                Layout.fillWidth: true
-            }
+        // Divider
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: Color.divider
+        }
 
-            // Spacer
-            Item {
-                Layout.fillHeight: true
-            }
+        // Health section (health, capacity, model)
+        BatteryHealth {
+            Layout.fillWidth: true
+        }
+
+        // Spacer
+        Item {
+            Layout.fillHeight: true
+        }
     }
 
     // Function to show the popup at a specific position

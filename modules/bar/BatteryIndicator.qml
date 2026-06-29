@@ -23,9 +23,15 @@ Row {
         verticalAlignment: Text.AlignVCenter
     }
 
+    // Battery popup instance
+    BatteryPopup {
+        id: batteryPopup
+    }
+
     // Click target for the entire indicator
     MouseArea {
-        anchors.fill: parent
+        width: childrenRect.width
+        height: childrenRect.height
         cursorShape: Qt.PointingHandCursor
         onClicked: {
             if (batteryPopup.isOpen) {
@@ -33,13 +39,8 @@ Row {
             } else {
                 // Calculate position below the indicator
                 var globalPos = mapToItem(null, width / 2, height);
-                batteryPopup.show(bar, globalPos.x - batteryPopup.width / 2, globalPos.y + 4);
+                batteryPopup.show(bar, globalPos.x - batteryPopup.implicitWidth / 2, globalPos.y + 4);
             }
         }
-    }
-
-    // Battery popup instance
-    BatteryPopup {
-        id: batteryPopup
     }
 }
