@@ -1,3 +1,5 @@
+// Entry point for the Quickshell Wayland shell.
+// Instantiates global config and the status bar.
 import Quickshell
 import Quickshell.Services.UPower
 import Quickshell.Services.Pipewire
@@ -9,7 +11,7 @@ import "modules/bar"
 Scope {
     id: root
 
-    Config { }
+    Config { }   // Loads and watches shell.json for runtime config
 
-    Bar { }
+    Bar { }      // Renders the top status bar
 }

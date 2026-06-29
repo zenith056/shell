@@ -1,3 +1,5 @@
+// Battery service singleton.
+// Wraps UPower to expose battery state and charge-level icons.
 pragma Singleton
 import Quickshell
 import Quickshell.Services.UPower
@@ -6,24 +8,31 @@ import QtQuick
 Singleton {
     id: root
 
+    // Battery presence check
     property bool available: UPower.displayDevice ? UPower.displayDevice.isPresent : false
+    // Charge percentage (0.0 - 1.0)
     property real percentage: UPower.displayDevice ? UPower.displayDevice.percentage : 0
+    // Whether the battery is currently charging
     property bool charging: UPower.displayDevice ? UPower.displayDevice.state === UPowerDeviceState.Charging : false
+    // Human-readable state string (e.g., "charging", "discharging")
     property string status: UPower.displayDevice ? UPowerDeviceState.toString(UPower.displayDevice.state) : "unknown"
+    // Estimated seconds until fully charged
     property int timeToFull: UPower.displayDevice ? UPower.displayDevice.timeToFull : 0
+    // Estimated seconds until empty
     property int timeToEmpty: UPower.displayDevice ? UPower.displayDevice.timeToEmpty : 0
 
+    // Returns a Nerd Font glyph based on current charge level
     function statusIcon(): string {
         if (!available)
-            return "󱉝"; // nf-md-battery_outline
+            return "󱉝"; // nf-md-battery_outline — no battery detected
         if (charging)
-            return "󰂅"; // nf-md-battery_charging
+            return "󰂅"; // nf-md-battery_charging — charging state
         if (percentage > 0.75)
-            return "󰂀"; // nf-md-battery
+            return "󰂀"; // nf-md-battery — full/high charge
         if (percentage > 0.50)
-            return "󰁾"; // nf-md-battery_60
+            return "󰁾"; // nf-md-battery_60 — medium charge
         if (percentage > 0.25)
-            return "󰁻"; // nf-md-battery_30
-        return "󰁺"; // nf-md-battery_10
+            return "󰁻"; // nf-md-battery_30 — low charge
+        return "󰁺";     // nf-md-battery_10 — critical charge
     }
 }
