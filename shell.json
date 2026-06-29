@@ -1,0 +1,14 @@
+{
+    "bar": {
+        "height": 32,
+        "position": "top",
+        "modules": ["clock", "workspaces", "battery", "network"]
+    },
+    "appearance": {
+        "backgroundColor": "#cc1e1e2e",
+        "textColor": "#cdd6f4",
+        "accentColor": "#89b4fa",
+        "font": "monospace",
+        "fontSize": 14
+    }
+}

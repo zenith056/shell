@@ -1,0 +1,5 @@
+module Services 1.0
+Battery 1.0 Battery.qml
+Network 1.0 Network.qml
+Audio 1.0 Audio.qml
+Time 1.0 Time.qml
