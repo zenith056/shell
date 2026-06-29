@@ -3,6 +3,7 @@
 // Uses wpctl (WirePlumber) for volume control.
 pragma Singleton
 import Quickshell
+import Quickshell.Io
 import QtQuick
 
 Singleton {
