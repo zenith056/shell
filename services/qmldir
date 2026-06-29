@@ -1,3 +1,4 @@
 module Services
 singleton Time 1.0 Time.qml
 singleton Network 1.0 Network.qml
+singleton Battery 1.0 Battery.qml

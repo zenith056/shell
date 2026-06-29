@@ -1,32 +1,25 @@
 import QtQuick
 import "../../config"
-import Quickshell.Services.UPower
+import "../../services"
 
 Row {
     id: battery
 
-    property bool available: UPower.displayDevice.isPresent
-    property real percentage: UPower.displayDevice.percentage
-    property bool charging: UPower.displayDevice.state === UPowerDeviceState.Charging
+    property bool available: Battery.available
+    property real percentage: Battery.percentage
+    property bool charging: Battery.charging
 
     spacing: 4
 
     Text {
-        text: {
-            if (!battery.available) return "battery-missing"
-            if (battery.charging) return "battery-charging"
-            if (battery.percentage > 75) return "battery-full"
-            if (battery.percentage > 50) return "battery-good"
-            if (battery.percentage > 25) return "battery-low"
-            return "battery-empty"
-        }
+        text: Battery.statusIcon()
         color: BarConfig.textColor
         font.pixelSize: 14
         verticalAlignment: Text.AlignVCenter
     }
 
     Text {
-        text: available ? Math.round(percentage) + "%" : "N/A"
+        text: available ? Math.round(percentage * 100) + "%" : "N/A"
         color: BarConfig.textColor
         font.pixelSize: 12
         font.family: "monospace"
