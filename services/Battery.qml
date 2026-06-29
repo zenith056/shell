@@ -26,23 +26,30 @@ Singleton {
     property real energy: UPower.displayDevice ? UPower.displayDevice.energy : 0
     // Maximum energy capacity in watt-hours
     property real energyCapacity: UPower.displayDevice ? UPower.displayDevice.energyCapacity : 0
-    // Battery health percentage
-    property real healthPercentage: UPower.displayDevice ? UPower.displayDevice.healthPercentage : 0
+    // Battery health percentage (0-100)
+    property real healthPercentage: {
+        if (!UPower.displayDevice) return 0;
+        // Try healthPercentage first, fallback to calculating from energy/energyCapacity
+        var health = UPower.displayDevice.healthPercentage;
+        if (health > 0) return health;
+        if (energyCapacity > 0) return (energy / energyCapacity) * 100;
+        return 100;
+    }
     // Device model name
-    property string model: UPower.displayDevice ? UPower.displayDevice.model : "Unknown"
+    property string model: UPower.displayDevice ? (UPower.displayDevice.model || UPower.displayDevice.nativePath || "Unknown") : "Unknown"
 
     // Returns a Nerd Font glyph based on current charge level
     function statusIcon(): string {
         if (!available)
             return "󱃌"; // nf-md-battery_outline — no battery detected
         if (charging)
-            return ""; // nf-md-battery_charging — charging state
+            return ""; // nf-md-battery_charging — charging state
         if (percentage > 0.75)
-            return ""; // nf-md-battery — full/high charge
+            return ""; // nf-md-battery — full/high charge
         if (percentage > 0.50)
-            return ""; // nf-md-battery_60 — medium charge
+            return ""; // nf-md-battery_60 — medium charge
         if (percentage > 0.25)
-            return ""; // nf-md-battery_10 — critical charge
-        return ""; // nf-md-battery_10 — critical charge
+            return ""; // nf-md-battery_10 — critical charge
+        return ""; // nf-md-battery_10 — critical charge
     }
 }
