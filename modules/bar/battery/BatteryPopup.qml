@@ -15,7 +15,7 @@ PopupWindow {
     visible: isOpen
     grabFocus: true
     implicitWidth: 300
-    implicitHeight: 280
+    implicitHeight: 260
 
     color: Color.background
 
@@ -88,13 +88,13 @@ PopupWindow {
             Text {
                 text: {
                     if (Battery.timeToFull > 0) {
-                        var hours = Math.floor(Battery.timeToFull / 3600);
-                        var mins = Math.floor((Battery.timeToFull % 3600) / 60);
-                        return "Time left: " + hours + "h " + mins + "m";
+                        var h = Math.floor(Battery.timeToFull / 3600);
+                        var m = Math.floor((Battery.timeToFull % 3600) / 60);
+                        return "Time left: " + h + "h " + m + "m";
                     } else if (Battery.timeToEmpty > 0) {
-                        var hours = Math.floor(Battery.timeToEmpty / 3600);
-                        var mins = Math.floor((Battery.timeToEmpty % 3600) / 60);
-                        return "Time left: " + hours + "h " + mins + "m";
+                        var h = Math.floor(Battery.timeToEmpty / 3600);
+                        var m = Math.floor((Battery.timeToEmpty % 3600) / 60);
+                        return "Time left: " + h + "h " + m + "m";
                     }
                     return "Time left: --";
                 }
@@ -148,32 +148,35 @@ PopupWindow {
             spacing: 8
 
             Repeater {
-                model: ["Power Saver", "Balanced", "Performance"]
+                model: PowerProfile.profiles
 
                 Rectangle {
+                    property string profileName: modelData
+                    property bool isActive: PowerProfile.activeProfile === profileName
+
                     Layout.fillWidth: true
                     Layout.preferredHeight: 32
                     radius: 6
-                    color: profileArea.containsMouse ? Color.divider : "transparent"
+                    color: isActive ? Color.accent : (btnArea.containsMouse ? Color.divider : "transparent")
                     border.color: Color.divider
                     border.width: 1
 
                     Text {
                         anchors.centerIn: parent
-                        text: modelData
-                        color: Color.text
+                        text: profileName === "power-saver" ? "Power Saver"
+                            : profileName === "balanced" ? "Balanced"
+                            : "Performance"
+                        color: isActive ? "#000000" : Color.text
                         font.family: BarConfig.fontFamily
                         font.pixelSize: 10
                     }
 
                     MouseArea {
-                        id: profileArea
+                        id: btnArea
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            // TODO: implement power profile switching
-                        }
+                        onClicked: PowerProfile.setProfile(profileName)
                     }
                 }
             }

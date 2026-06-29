@@ -4,3 +4,4 @@ singleton Network 1.0 Network.qml
 singleton Battery 1.0 Battery.qml
 singleton Audio 1.0 Audio.qml
 singleton Workspaces 1.0 Workspaces.qml
+singleton PowerProfile 1.0 PowerProfile.qml
