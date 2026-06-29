@@ -32,6 +32,7 @@
 - Use `RowLayout` with `Layout.alignment: Qt.AlignVCenter` instead of `Row` when children have different heights and need vertical centering.
 - Use `implicitWidth`/`implicitHeight` instead of `width`/`height` for components.
 - **All colors must come from `Color` singleton in Commons.** No hardcoded hex values in QML files.
+- **Color palette: black, white, gray only.** No accent colors (blue, green, red). Use `#000000` for background, `#ffffff` for text, `#333333` for dividers, `#666666` for inactive, `#999999` for muted text.
 - **No borders.** Popups and UI elements must not use `border.color` or `border.width`.
 - **Nerd Font glyphs must use Unicode escapes** (e.g., `\uf028`) not raw characters.
 - **Always test before committing.** Run `quickshell -c ~/projects/shell` to verify no errors.

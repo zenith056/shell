@@ -35,7 +35,7 @@ ColumnLayout {
     // Charging status
     Text {
         text: charging ? "Charging" : "Discharging"
-        color: charging ? Color.success : Color.error
+        color: Color.text
         font.family: BarConfig.fontFamily
         font.pixelSize: 12
         Layout.alignment: Qt.AlignHCenter

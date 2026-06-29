@@ -67,7 +67,7 @@ PopupWindow {
             Rectangle {
                 width: parent.width * Battery.percentage
                 height: parent.height
-                color: Battery.charging ? "#4ade80" : "#ffffff"
+                color: Battery.charging ? "#888888" : "#ffffff"
             }
         }
 
@@ -157,8 +157,8 @@ PopupWindow {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 32
                     radius: 6
-                    color: isActive ? Color.accent : (btnArea.containsMouse ? Color.divider : "transparent")
-                    border.color: Color.divider
+                    color: isActive ? "#ffffff" : (btnArea.containsMouse ? "#333333" : "transparent")
+                    border.color: "#444444"
                     border.width: 1
 
                     Text {
