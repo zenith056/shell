@@ -1,4 +1,5 @@
 module Bar
+AudioIndicator 1.0 AudioIndicator.qml
 Bar 1.0 Bar.qml
 BatteryIndicator 1.0 BatteryIndicator.qml
 Clock 1.0 Clock.qml

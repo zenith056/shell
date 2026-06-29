@@ -49,12 +49,13 @@ PanelWindow {
             anchors.verticalCenter: parent.verticalCenter
         }
 
-        // Right-side indicators — network and battery
+        // Right-side indicators — audio, network, battery
         RowLayout {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 8
+            spacing: 16
 
+            AudioIndicator { Layout.alignment: Qt.AlignVCenter }
             NetworkIndicator { Layout.alignment: Qt.AlignVCenter }
             BatteryIndicator { Layout.alignment: Qt.AlignVCenter }
         }
