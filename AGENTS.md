@@ -35,6 +35,7 @@
 - **Color palette: black, white, gray only.** No accent colors (blue, green, red). Use `#000000` for background, `#ffffff` for text, `#333333` for dividers, `#666666` for inactive, `#999999` for muted text.
 - **No borders.** Popups and UI elements must not use `border.color` or `border.width`.
 - **Nerd Font glyphs must use Unicode escapes** (e.g., `\uf028`) not raw characters.
+- **Do not modify or move icons in Icons.qml.** The user has manually set specific glyphs. Never change them without explicit permission.
 - **Always test before committing.** Run `quickshell -c ~/projects/shell` to verify no errors.
 
 ## Architecture
