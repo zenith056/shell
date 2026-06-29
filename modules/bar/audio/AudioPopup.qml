@@ -13,8 +13,8 @@ PopupWindow {
 
     visible: isOpen
     grabFocus: true
-    implicitWidth: 160
-    implicitHeight: 60
+    implicitWidth: 120
+    implicitHeight: 32
 
     color: "transparent"
 
@@ -35,17 +35,17 @@ PopupWindow {
     Rectangle {
         anchors.fill: contentArea
         color: Color.background
-        radius: 8
+        radius: 6
     }
 
     // Content container
     RowLayout {
         id: contentArea
         anchors.centerIn: parent
-        width: 140
-        height: 44
-        spacing: 10
-        anchors.margins: 12
+        width: 100
+        height: 24
+        spacing: 8
+        anchors.margins: 8
 
         Keys.onEscapePressed: {
             audioOsd.hide();
@@ -60,7 +60,7 @@ PopupWindow {
                 : "\uf028"
             color: Color.text
             font.family: BarConfig.fontFamily
-            font.pixelSize: 16
+            font.pixelSize: 12
             Layout.alignment: Qt.AlignVCenter
         }
 
@@ -69,7 +69,7 @@ PopupWindow {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
-            radius: 4
+            radius: 3
             color: Color.divider
 
             // Filled portion
