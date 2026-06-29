@@ -29,6 +29,7 @@
 - Register new components in the corresponding `qmldir` file.
 - Prefer `readonly property` for constants.
 - Use descriptive `id` values that reflect the component's role.
+- Use `RowLayout` with `Layout.alignment: Qt.AlignVCenter` instead of `Row` when children have different heights and need vertical centering. `Row` aligns children to the top by default, which causes visual misalignment when items vary in size.
 
 ## Architecture
 

@@ -4,6 +4,7 @@
 import Quickshell
 import Quickshell.Wayland
 import QtQuick
+import QtQuick.Layouts
 import "../../config"
 import "../../services"
 import Quickshell.Services.UPower
@@ -44,13 +45,13 @@ PanelWindow {
         }
 
         // Right-side indicators — network and battery
-        Row {
+        RowLayout {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             spacing: 8
 
-            NetworkIndicator {}
-            BatteryIndicator {}
+            NetworkIndicator { Layout.alignment: Qt.AlignVCenter }
+            BatteryIndicator { Layout.alignment: Qt.AlignVCenter }
         }
     }
 }
