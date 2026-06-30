@@ -1,5 +1,6 @@
 // Base popup component.
 // Provides common popup boilerplate: show/hide, positioning, escape key.
+// Registers with PopupManager for mutual exclusion.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -14,10 +15,18 @@ PopupWindow {
     grabFocus: true
     color: Color.background
 
-    onVisibleChanged: if (!visible) isOpen = false
+    onVisibleChanged: {
+        if (!visible) {
+            isOpen = false;
+            PopupManager.unregisterPopup(basePopup);
+        }
+    }
 
-    // Standard show: positions popup below the anchor button
+    Keys.onEscapePressed: hide()
+
+    // Position popup below the anchor button and close others
     function show(anchorWindow, anchorButtonItem) {
+        PopupManager.closeOthers(basePopup);
         var pos = anchorButtonItem.mapToItem(anchorWindow.contentItem, 0, 0);
         anchor.window = anchorWindow;
         anchor.rect = Qt.rect(
@@ -28,6 +37,7 @@ PopupWindow {
         );
         isOpen = true;
         visible = true;
+        PopupManager.registerPopup(basePopup);
     }
 
     function hide() {

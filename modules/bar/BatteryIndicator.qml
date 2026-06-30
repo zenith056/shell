@@ -21,7 +21,6 @@ Item {
         font.pixelSize: Style.font.indicator
     }
 
-    // Click target for the entire indicator
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
@@ -34,7 +33,6 @@ Item {
         }
     }
 
-    // Battery popup instance
     BatteryPopup {
         id: batteryPopup
     }

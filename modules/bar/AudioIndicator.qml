@@ -1,5 +1,5 @@
 // Audio indicator widget for the status bar.
-// Shows a volume icon and OSD popup on volume change.
+// Shows a volume icon; triggers OSD on volume change.
 import QtQuick
 import "../../Commons"
 import "../../services"
@@ -21,16 +21,14 @@ Item {
         font.pixelSize: Style.font.title
     }
 
-    // Show OSD when volume changes
     Connections {
         target: Audio
         function onVolumeChangedSignal() {
-            audioOsd.showOsd(bar);
+            audioOsd.showOsd();
         }
     }
 
-    // Audio OSD instance
-    AudioPopup {
+    AudioOsd {
         id: audioOsd
     }
 }

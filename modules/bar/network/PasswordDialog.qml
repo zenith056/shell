@@ -127,8 +127,9 @@ BasePopup {
         hide();
     }
 
-    // Override show to accept ssid parameter
+    // Show dialog positioned under anchor item
     function showDialog(anchorWindow, anchorButtonItem, ssid) {
+        PopupManager.closeOthers(passwordDialog);
         networkSsid = ssid;
         var pos = anchorButtonItem.mapToItem(anchorWindow.contentItem, 0, 0);
         anchor.window = anchorWindow;
@@ -140,5 +141,6 @@ BasePopup {
         );
         isOpen = true;
         visible = true;
+        PopupManager.registerPopup(passwordDialog);
     }
 }

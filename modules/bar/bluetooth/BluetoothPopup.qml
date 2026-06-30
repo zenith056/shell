@@ -276,6 +276,7 @@ BasePopup {
 
     // Override show to also refresh available devices
     function show(anchorWindow, anchorButtonItem) {
+        PopupManager.closeOthers(bluetoothPopup);
         Bluetooth.refreshAvailable();
         var pos = anchorButtonItem.mapToItem(anchorWindow.contentItem, 0, 0);
         anchor.window = anchorWindow;
@@ -287,5 +288,6 @@ BasePopup {
         );
         isOpen = true;
         visible = true;
+        PopupManager.registerPopup(bluetoothPopup);
     }
 }

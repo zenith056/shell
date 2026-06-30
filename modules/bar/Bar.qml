@@ -7,6 +7,7 @@ import QtQuick
 import QtQuick.Layouts
 import "../../Commons"
 import "../../services"
+import "../../utils"
 
 PanelWindow {
     id: bar
@@ -23,6 +24,11 @@ PanelWindow {
     Rectangle {
         anchors.fill: parent
         color: BarConfig.backgroundColor
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: PopupManager.closeAll()
+        }
     }
 
     Item {

@@ -175,6 +175,7 @@ BasePopup {
 
     // Override show to also trigger scan
     function show(anchorWindow, anchorButtonItem) {
+        PopupManager.closeOthers(networkPopup);
         Network.scanNetworks();
         var pos = anchorButtonItem.mapToItem(anchorWindow.contentItem, 0, 0);
         anchor.window = anchorWindow;
@@ -186,5 +187,6 @@ BasePopup {
         );
         isOpen = true;
         visible = true;
+        PopupManager.registerPopup(networkPopup);
     }
 }

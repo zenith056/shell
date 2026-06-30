@@ -1,5 +1,6 @@
 // Audio OSD component.
 // Shows icon, volume slider, and percentage in one row.
+// Completely independent — does not interact with PopupManager.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -11,8 +12,8 @@ import "../../../components"
 BasePopup {
     id: audioOsd
 
-    implicitWidth: 240
-    implicitHeight: 40
+    implicitWidth: 300
+    implicitHeight: 30
 
     Timer {
         id: hideTimer
@@ -58,17 +59,19 @@ BasePopup {
         }
     }
 
-    // Override show to center horizontally and auto-hide
+    // Center horizontally above the bar — uses anchor for Wayland, independent from other popups
     function showOsd(anchorWindow) {
         hideTimer.restart();
         anchor.window = anchorWindow;
         anchor.rect = Qt.rect(
             anchorWindow.width / 2 - implicitWidth / 2,
-            anchorWindow.height,
+            -implicitHeight,
             implicitWidth,
             implicitHeight
         );
-        isOpen = true;
-        visible = true;
+        if (!isOpen) {
+            isOpen = true;
+            visible = true;
+        }
     }
 }

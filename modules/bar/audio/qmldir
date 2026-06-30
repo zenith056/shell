@@ -1,2 +1,3 @@
 module qs.modules.bar.audio
 AudioPopup 1.0 AudioPopup.qml
+AudioOsd 1.0 AudioOsd.qml
