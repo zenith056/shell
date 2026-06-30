@@ -14,10 +14,14 @@ Item {
 
     Text {
         id: iconText
-        text: Bluetooth.enabled ? Icons.bluetooth : Icons.bluetoothOff
+        text: {
+            if (!Bluetooth.enabled) return Icons.bluetoothOff;
+            if (Bluetooth.connectedDevice) return Icons.headphones;
+            return Icons.bluetooth;
+        }
         color: Bluetooth.connectedDevice ? Color.success : BarConfig.textColor
         font.family: Style.font.family
-        font.pixelSize: Style.font.indicator
+        font.pixelSize: Bluetooth.connectedDevice ? Style.font.indicator + 2 : Style.font.indicator
         verticalAlignment: Text.AlignVCenter
     }
 

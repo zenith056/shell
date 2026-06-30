@@ -1,259 +1,235 @@
 // Bluetooth service singleton.
-// Manages Bluetooth state, scanning, and device connections.
+// Uses Quickshell.Bluetooth native API for reactive state.
 pragma Singleton
 import Quickshell
-import Quickshell.Io
+import Quickshell.Bluetooth
 import QtQuick
 
 Singleton {
     id: root
 
-    property bool enabled: false
-    property bool scanning: false
+    readonly property var adapter: Bluetooth.defaultAdapter
+    readonly property bool enabled: adapter ? adapter.enabled : false
+    readonly property bool scanning: adapter ? adapter.discovering : false
     property var pairedDevices: []
     property var availableDevices: []
     property var connectedDevice: null
-    property int connectedBattery: -1
+    property string lastError: ""
 
-    // Polls Bluetooth state every 3 seconds
+    function clearPending(error: string) {
+        root.lastError = error;
+        errorClearTimer.restart();
+    }
+
+    Timer {
+        id: errorClearTimer
+        interval: 4000
+        onTriggered: root.lastError = ""
+    }
+
+    // Poll paired devices and connected state every 3 seconds
     Timer {
         interval: 3000
         running: true
         repeat: true
         triggeredOnStart: true
-        onTriggered: {
-            powerProc.exec(["bluetoothctl", "show"]);
-            pairedProc.exec(["bluetoothctl", "devices", "Paired"]);
-        }
+        onTriggered: root.refreshPaired()
     }
 
-    // Get power state
-    Process {
-        id: powerProc
-        command: ["bluetoothctl", "show"]
-        stdout: StdioCollector {
-            waitForEnd: true
-            onStreamFinished: {
-                root.enabled = this.text.includes("Powered: yes");
-            }
+    // Build device list from adapter.devices using values property
+    function buildDeviceList(): var {
+        if (!adapter) return [];
+        var devs = adapter.devices.values;
+        if (!devs) return [];
+        var devices = [];
+        for (var i = 0; i < devs.length; i++) {
+            var d = devs[i];
+            devices.push({
+                name: d.name || d.deviceName || "Unknown",
+                address: d.address,
+                connected: d.connected,
+                paired: d.paired,
+                pairing: d.pairing,
+                battery: d.batteryAvailable ? Math.round(d.battery * 100) : -1,
+                icon: d.icon
+            });
         }
+        return devices;
     }
 
-    // Get paired devices
-    Process {
-        id: pairedProc
-        command: ["bluetoothctl", "devices", "Paired"]
-        stdout: StdioCollector {
-            waitForEnd: true
-            onStreamFinished: {
-                var lines = this.text.trim().split("\n");
-                var devices = [];
-                for (var i = 0; i < lines.length; i++) {
-                    var match = lines[i].match(/^Device ([\w:]+)\s+(.+)$/);
-                    if (match) {
-                        devices.push({
-                            address: match[1],
-                            name: match[2]
-                        });
-                    }
-                }
-                root.pairedDevices = devices;
-                root.updateConnectedDevice();
-            }
-        }
-    }
-
-    // Update connected device info
-    function updateConnectedDevice() {
-        for (var i = 0; i < pairedDevices.length; i++) {
-            infoProc.command = ["bluetoothctl", "info", pairedDevices[i].address];
-            infoProc.running = true;
-            break;
-        }
-    }
-
-    Process {
-        id: infoProc
-        command: ["bluetoothctl", "info", ""]
-        stdout: StdioCollector {
-            waitForEnd: true
-            onStreamFinished: {
-                var text = this.text;
-                if (text.includes("Connected: yes")) {
-                    var nameMatch = text.match(/Name:\s+(.+)/);
-                    root.connectedDevice = nameMatch ? nameMatch[1] : "Unknown";
-                } else {
-                    root.connectedDevice = null;
+    // Refresh paired devices list
+    function refreshPaired(): void {
+        var all = buildDeviceList();
+        var paired = [];
+        var connected = null;
+        for (var i = 0; i < all.length; i++) {
+            if (all[i].paired) {
+                paired.push(all[i]);
+                if (all[i].connected && !connected) {
+                    connected = all[i];
                 }
             }
         }
+        root.pairedDevices = paired;
+        root.connectedDevice = connected;
+    }
+
+    // Refresh available (unpaired) devices from scan results
+    function refreshAvailable(): void {
+        if (!adapter) return;
+        var devs = adapter.devices.values;
+        if (!devs) return;
+        var devices = [];
+        for (var i = 0; i < devs.length; i++) {
+            var d = devs[i];
+            if (!d.paired) {
+                devices.push({
+                    name: d.name || d.deviceName || "Unknown",
+                    address: d.address
+                });
+            }
+        }
+        root.availableDevices = devices;
     }
 
     // Toggle Bluetooth on/off
     function toggle(): void {
-        if (enabled) {
-            toggleProc.command = ["bluetoothctl", "power", "off"];
-        } else {
-            toggleProc.command = ["bluetoothctl", "power", "on"];
-        }
-        toggleProc.running = true;
-        enabled = !enabled;
+        if (!adapter) return;
+        adapter.enabled = !adapter.enabled;
     }
 
-    Process {
-        id: toggleProc
-        command: ["bluetoothctl", "power", "off"]
-    }
-
-    // Start scanning
+    // Start scanning for devices
     function startScan(): void {
-        scanning = true;
-        scanProc.running = true;
-        // Stop scan after 10 seconds
-        scanTimer.start();
+        if (!adapter) return;
+        adapter.discoverable = true;
+        adapter.pairable = true;
+        adapter.discovering = true;
+        scanPollTimer.restart();
     }
 
-    Process {
-        id: scanProc
-        command: ["bluetoothctl", "scan", "on"]
+    // Stop scanning
+    function stopScan(): void {
+        if (!adapter) return;
+        adapter.discovering = false;
+        refreshAvailable();
     }
 
+    // Continuously refresh available devices while scanning
     Timer {
-        id: scanTimer
-        interval: 10000
-        onTriggered: {
-            root.scanning = false;
-            stopScanProc.running = true;
-            root.refreshAvailable();
-        }
-    }
-
-    Process {
-        id: stopScanProc
-        command: ["bluetoothctl", "scan", "off"]
-    }
-
-    // Refresh available devices
-    function refreshAvailable(): void {
-        availableProc.running = true;
-    }
-
-    Process {
-        id: availableProc
-        command: ["bluetoothctl", "devices", "Device"]
-        stdout: StdioCollector {
-            waitForEnd: true
-            onStreamFinished: {
-                var lines = this.text.trim().split("\n");
-                var devices = [];
-                var pairedAddresses = {};
-                for (var i = 0; i < root.pairedDevices.length; i++) {
-                    pairedAddresses[root.pairedDevices[i].address] = true;
-                }
-                for (var i = 0; i < lines.length; i++) {
-                    var match = lines[i].match(/^Device ([\w:]+)\s+(.+)$/);
-                    if (match && !pairedAddresses[match[1]]) {
-                        devices.push({
-                            address: match[1],
-                            name: match[2]
-                        });
-                    }
-                }
-                root.availableDevices = devices;
-            }
-        }
+        id: scanPollTimer
+        interval: 2000
+        running: root.scanning
+        repeat: true
+        onTriggered: root.refreshAvailable()
     }
 
     // Pair with device
     function pair(address: string): void {
-        pairProc.command = ["bluetoothctl", "pair", address];
-        pairProc.running = true;
+        root.lastError = "";
+        // Ensure pairable before pairing
+        if (adapter) {
+            adapter.pairable = true;
+        }
+        var device = root.findDevice(address);
+        if (device) {
+            device.pair();
+            pairWatchTimer.address = address;
+            pairWatchTimer.restart();
+        }
     }
 
-    Process {
-        id: pairProc
-        command: ["bluetoothctl", "pair", ""]
-        stdout: StdioCollector {
-            waitForEnd: true
-            onStreamFinished: {
-                root.refreshAvailable();
-                pairedProc.exec(["bluetoothctl", "devices", "Paired"]);
+    // Watch for pairing result
+    Timer {
+        id: pairWatchTimer
+        interval: 1000
+        repeat: true
+        property string address: ""
+        onTriggered: {
+            var device = root.findDevice(address);
+            if (device && !device.pairing) {
+                pairWatchTimer.stop();
+                if (device.paired) {
+                    root.refreshPaired();
+                    root.refreshAvailable();
+                } else {
+                    root.clearPending("Pairing failed");
+                }
             }
         }
     }
 
-    // Connect to device
+    // Connect to paired device
     function connect(address: string): void {
-        connectProc.command = ["bluetoothctl", "connect", address];
-        connectProc.running = true;
+        root.lastError = "";
+        var device = root.findDevice(address);
+        if (device) {
+            device.connect();
+            connectWatchTimer.address = address;
+            connectWatchTimer.restart();
+        }
     }
 
-    Process {
-        id: connectProc
-        command: ["bluetoothctl", "connect", ""]
-        stdout: StdioCollector {
-            waitForEnd: true
-            onStreamFinished: {
-                pairedProc.exec(["bluetoothctl", "devices", "Paired"]);
+    // Watch for connection result
+    Timer {
+        id: connectWatchTimer
+        interval: 1000
+        repeat: true
+        property string address: ""
+        onTriggered: {
+            var device = root.findDevice(address);
+            if (device) {
+                if (device.connected) {
+                    connectWatchTimer.stop();
+                    root.refreshPaired();
+                } else if (device.state === BluetoothDeviceState.Disconnected) {
+                    connectWatchTimer.stop();
+                    root.clearPending("Connection failed");
+                }
             }
         }
     }
 
     // Disconnect from device
     function disconnect(address: string): void {
-        disconnectProc.command = ["bluetoothctl", "disconnect", address];
-        disconnectProc.running = true;
+        var device = root.findDevice(address);
+        if (device) {
+            device.disconnect();
+            disconnectRefreshTimer.restart();
+        }
     }
 
-    Process {
-        id: disconnectProc
-        command: ["bluetoothctl", "disconnect", ""]
-        stdout: StdioCollector {
-            waitForEnd: true
-            onStreamFinished: {
-                pairedProc.exec(["bluetoothctl", "devices", "Paired"]);
-            }
-        }
+    Timer {
+        id: disconnectRefreshTimer
+        interval: 1000
+        onTriggered: root.refreshPaired()
     }
 
     // Remove paired device
     function remove(address: string): void {
-        removeProc.command = ["bluetoothctl", "remove", address];
-        removeProc.running = true;
-    }
-
-    Process {
-        id: removeProc
-        command: ["bluetoothctl", "remove", ""]
-        stdout: StdioCollector {
-            waitForEnd: true
-            onStreamFinished: {
-                pairedProc.exec(["bluetoothctl", "devices", "Paired"]);
-                root.refreshAvailable();
-            }
+        var device = root.findDevice(address);
+        if (device) {
+            device.forget();
+            removeRefreshTimer.restart();
         }
     }
 
-    // Get battery level for device
-    function getBattery(address: string): void {
-        batteryProc.command = ["bluetoothctl", "info", address];
-        batteryProc.running = true;
-    }
-
-    Process {
-        id: batteryProc
-        command: ["bluetoothctl", "info", ""]
-        stdout: StdioCollector {
-            waitForEnd: true
-            onStreamFinished: {
-                var match = this.text.match(/Battery Percentage:\s+\w+\s+\((\d+)%\)/);
-                if (match) {
-                    root.connectedBattery = parseInt(match[1]);
-                } else {
-                    root.connectedBattery = -1;
-                }
-            }
+    Timer {
+        id: removeRefreshTimer
+        interval: 1000
+        onTriggered: {
+            root.refreshPaired();
+            root.refreshAvailable();
         }
     }
 
+    // Find device by address from adapter's device model
+    function findDevice(address: string) {
+        if (!adapter) return null;
+        var devs = adapter.devices.values;
+        if (!devs) return null;
+        for (var i = 0; i < devs.length; i++) {
+            if (devs[i].address === address) return devs[i];
+        }
+        return null;
+    }
 }
