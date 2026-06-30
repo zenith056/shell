@@ -9,7 +9,7 @@ import "battery"
 Item {
     id: battery
 
-    implicitWidth: Style.font.indicator + 2
+    implicitWidth: Style.font.indicator - 8
     height: BarConfig.height
 
     Text {

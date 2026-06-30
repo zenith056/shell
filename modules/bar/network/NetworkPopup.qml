@@ -1,5 +1,5 @@
 // Network popup component.
-// Shows WiFi, Ethernet, and hotspot controls.
+// Shows WiFi connection controls and available networks.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -121,7 +121,7 @@ BasePopup {
                             color: netArea.containsMouse ? Color.divider : "transparent"
                             radius: 6
 
-                            property bool isConnected: Network.ssid === modelData.ssid
+                            property bool isConnected: modelData.connected
 
                             RowLayout {
                                 anchors.fill: parent
@@ -146,7 +146,7 @@ BasePopup {
                                 }
 
                                 Text {
-                                    text: modelData.security !== "None" ? Icons.lock : ""
+                                    text: modelData.security !== "Open" && modelData.security !== "Unknown" ? Icons.lock : ""
                                     color: Color.textMuted
                                     font.family: Style.font.family
                                     font.pixelSize: Style.font.body
@@ -159,7 +159,7 @@ BasePopup {
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
-                                    if (modelData.security !== "None") {
+                                    if (modelData.security !== "Open" && modelData.security !== "Unknown") {
                                         networkPopup.requestPassword(modelData.ssid);
                                     } else {
                                         Network.connect(modelData.ssid, "");
@@ -169,29 +169,6 @@ BasePopup {
                         }
                     }
                 }
-            }
-        }
-
-        Divider {}
-
-        // Hotspot Section
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 8
-
-            Text {
-                text: "Hotspot"
-                color: Color.text
-                font.family: Style.font.family
-                font.pixelSize: Style.font.title
-                font.bold: true
-            }
-
-            Item { Layout.fillWidth: true }
-
-            ToggleSwitch {
-                active: Network.hotspotActive
-                onToggled: Network.toggleHotspot()
             }
         }
     }
