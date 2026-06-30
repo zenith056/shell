@@ -87,7 +87,6 @@ BasePopup {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 52
-                            color: pArea.containsMouse ? Color.divider : "transparent"
                             radius: 6
                             property bool isConnected: Bluetooth.connectedDevice === modelData.name
 
@@ -105,7 +104,6 @@ BasePopup {
                                 IconButton { icon: isConnected ? Icons.times : Icons.link; onClicked: { if (isConnected) Bluetooth.disconnect(modelData.address); else Bluetooth.connect(modelData.address); } }
                                 IconButton { icon: Icons.trash; onClicked: Bluetooth.remove(modelData.address) }
                             }
-                            MouseArea { id: pArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { if (isConnected) Bluetooth.disconnect(modelData.address); else Bluetooth.connect(modelData.address); } }
                         }
                     }
 
@@ -117,7 +115,6 @@ BasePopup {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 44
-                            color: aArea.containsMouse ? Color.divider : "transparent"
                             radius: 6
                             RowLayout {
                                 anchors.fill: parent
@@ -127,7 +124,6 @@ BasePopup {
                                 Text { text: modelData.name; color: Color.text; font.family: Style.font.family; font.pixelSize: Style.font.body; Layout.fillWidth: true; elide: Text.ElideRight }
                                 IconButton { icon: Icons.plus; onClicked: Bluetooth.pair(modelData.address) }
                             }
-                            MouseArea { id: aArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: Bluetooth.connect(modelData.address) }
                         }
                     }
                 }
