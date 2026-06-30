@@ -36,6 +36,7 @@ QtObject {
     readonly property string powerSaver: "\udb84\ude0f"    // nf-fa-bolt
     readonly property string balanced: "\uf463"      // nf-fa-toggle-on
     readonly property string performance: "\udb81\udc63"   // nf-fa-rocket
+    readonly property string bolt: "\uf0e7"          // nf-fa-bolt
 
     // Network icons
     readonly property string wifi: "\udb82\udd28"          // nf-md-wifi_strength_4

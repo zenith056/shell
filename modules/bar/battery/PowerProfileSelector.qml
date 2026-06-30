@@ -2,7 +2,6 @@
 // Shows three profile buttons with icons.
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
 import "../../../Commons"
 import "../../../services"
 import "../../../utils"
@@ -27,8 +26,6 @@ RowLayout {
             Layout.preferredHeight: 40
             radius: 8
             color: isActive ? Color.text : (btnArea.containsMouse ? Color.divider : Color.surface)
-            border.color: Color.divider
-            border.width: 1
 
             RowLayout {
                 anchors.centerIn: parent

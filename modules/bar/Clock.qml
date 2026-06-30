@@ -8,7 +8,6 @@ Text {
     id: clock
 
     property string time: Time.time
-    property string date: Time.date
     property bool showDate: false
 
     text: showDate ? Time.expandedDate() : time

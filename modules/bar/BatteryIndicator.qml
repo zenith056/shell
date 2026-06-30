@@ -9,20 +9,15 @@ import "battery"
 Item {
     id: battery
 
-    property bool available: Battery.available
-    property real percentage: Battery.percentage
-    property bool charging: Battery.charging
-
     width: iconText.implicitWidth
     height: iconText.implicitHeight
 
-    // Battery icon using centralized Icons
     Text {
         id: iconText
         text: Icons.batteryIcon(Battery.available, Battery.charging, Battery.percentage)
         color: Battery.percentage <= 0.2 && !Battery.charging ? Color.lowBattery : BarConfig.textColor
         font.family: Style.font.family
-        font.pixelSize: Style.font.title + 4
+        font.pixelSize: Style.font.indicator
         verticalAlignment: Text.AlignVCenter
     }
 

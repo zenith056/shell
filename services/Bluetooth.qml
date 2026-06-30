@@ -256,10 +256,4 @@ Singleton {
         }
     }
 
-    // Returns a Nerd Font glyph based on Bluetooth state
-    function statusIcon(): string {
-        if (!enabled) return "\uf294";     // nf-fa-bluetooth_b
-        if (connectedDevice) return "\uf293";  // nf-fa-bluetooth
-        return "\uf294";                   // nf-fa-bluetooth_b
-    }
 }

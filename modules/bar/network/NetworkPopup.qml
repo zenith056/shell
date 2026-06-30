@@ -6,38 +6,23 @@ import Quickshell
 import "../../../Commons"
 import "../../../services"
 import "../../../utils"
+import "../../../components"
 
-PopupWindow {
+BasePopup {
     id: networkPopup
 
-    property bool isOpen: false
-
-    visible: isOpen
-    grabFocus: true
     implicitWidth: 360
     implicitHeight: 480
 
-    color: Color.background
-
-    onVisibleChanged: {
-        if (!visible) {
-            isOpen = false;
-        }
-    }
-
-    // Signal to request password dialog
     signal requestPassword(string ssid)
 
-    // Content container
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 16
         anchors.bottomMargin: 24
         spacing: 12
 
-        Keys.onEscapePressed: {
-            networkPopup.hide();
-        }
+        Keys.onEscapePressed: networkPopup.hide()
 
         // Header
         RowLayout {
@@ -45,7 +30,7 @@ PopupWindow {
             spacing: 8
 
             Text {
-                text: Network.statusIcon()
+                text: Icons.signalIcon(Network.signalStrength)
                 color: Color.text
                 font.family: Style.font.family
                 font.pixelSize: Style.font.iconLarge
@@ -60,14 +45,9 @@ PopupWindow {
             }
         }
 
-        // Divider
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 1
-            color: Color.divider
-        }
+        Divider {}
 
-        // WiFi Section header
+        // WiFi Section
         RowLayout {
             Layout.fillWidth: true
             spacing: 8
@@ -82,35 +62,13 @@ PopupWindow {
 
             Item { Layout.fillWidth: true }
 
-            // WiFi toggle
-            Rectangle {
-                width: 44
-                height: 24
-                radius: 12
-                color: Network.wifiEnabled ? Color.success : Color.divider
-
-                Rectangle {
-                    x: Network.wifiEnabled ? 22 : 2
-                    y: 2
-                    width: 20
-                    height: 20
-                    radius: 10
-                    color: Color.text
-
-                    Behavior on x {
-                        NumberAnimation { duration: 150 }
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: Network.toggleWifi()
-                }
+            ToggleSwitch {
+                active: Network.wifiEnabled
+                onToggled: Network.toggleWifi()
             }
         }
 
-        // WiFi networks list - scrollable
+        // WiFi networks list
         Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -141,20 +99,8 @@ PopupWindow {
                         RowLayout {
                             anchors.centerIn: parent
                             spacing: 6
-
-                            Text {
-                                text: Icons.refresh
-                                color: Color.text
-                                font.family: Style.font.family
-                                font.pixelSize: Style.font.body
-                            }
-
-                            Text {
-                                text: "Scan"
-                                color: Color.text
-                                font.family: Style.font.family
-                                font.pixelSize: Style.font.body
-                            }
+                            Text { text: Icons.refresh; color: Color.text; font.family: Style.font.family; font.pixelSize: Style.font.body }
+                            Text { text: "Scan"; color: Color.text; font.family: Style.font.family; font.pixelSize: Style.font.body }
                         }
 
                         MouseArea {
@@ -166,7 +112,6 @@ PopupWindow {
                         }
                     }
 
-                    // Network list
                     Repeater {
                         model: Network.availableNetworks
 
@@ -176,7 +121,6 @@ PopupWindow {
                             color: netArea.containsMouse ? Color.divider : "transparent"
                             radius: 6
 
-                            // Highlight if currently connected
                             property bool isConnected: Network.ssid === modelData.ssid
 
                             RowLayout {
@@ -184,7 +128,6 @@ PopupWindow {
                                 anchors.margins: 8
                                 spacing: 8
 
-                                // Signal icon
                                 Text {
                                     text: Icons.signalIcon(modelData.signal)
                                     color: Color.text
@@ -192,7 +135,6 @@ PopupWindow {
                                     font.pixelSize: Style.font.title
                                 }
 
-                                // SSID
                                 Text {
                                     text: modelData.ssid
                                     color: isConnected ? Color.success : Color.text
@@ -203,7 +145,6 @@ PopupWindow {
                                     elide: Text.ElideRight
                                 }
 
-                                // Lock icon if secured
                                 Text {
                                     text: modelData.security !== "None" ? Icons.lock : ""
                                     color: Color.textMuted
@@ -231,12 +172,7 @@ PopupWindow {
             }
         }
 
-        // Divider
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 1
-            color: Color.divider
-        }
+        Divider {}
 
         // Hotspot Section
         RowLayout {
@@ -253,39 +189,17 @@ PopupWindow {
 
             Item { Layout.fillWidth: true }
 
-            // Hotspot toggle
-            Rectangle {
-                width: 44
-                height: 24
-                radius: 12
-                color: Network.hotspotActive ? Color.success : Color.divider
-
-                Rectangle {
-                    x: Network.hotspotActive ? 22 : 2
-                    y: 2
-                    width: 20
-                    height: 20
-                    radius: 10
-                    color: Color.text
-
-                    Behavior on x {
-                        NumberAnimation { duration: 150 }
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: Network.toggleHotspot()
-                }
+            ToggleSwitch {
+                active: Network.hotspotActive
+                onToggled: Network.toggleHotspot()
             }
         }
     }
 
-    // Show popup below the bar
+    // Override show to also trigger scan
     function show(anchorWindow, anchorButtonItem) {
-        var pos = anchorButtonItem.mapToItem(anchorWindow.contentItem, 0, 0);
         Network.scanNetworks();
+        var pos = anchorButtonItem.mapToItem(anchorWindow.contentItem, 0, 0);
         anchor.window = anchorWindow;
         anchor.rect = Qt.rect(
             pos.x + anchorButtonItem.width / 2 - implicitWidth / 2,
@@ -295,11 +209,5 @@ PopupWindow {
         );
         isOpen = true;
         visible = true;
-    }
-
-    // Hide the popup
-    function hide() {
-        isOpen = false;
-        visible = false
     }
 }

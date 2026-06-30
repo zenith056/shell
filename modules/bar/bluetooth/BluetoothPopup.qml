@@ -6,19 +6,13 @@ import Quickshell
 import "../../../Commons"
 import "../../../services"
 import "../../../utils"
+import "../../../components"
 
-PopupWindow {
+BasePopup {
     id: bluetoothPopup
 
-    property bool isOpen: false
-
-    visible: isOpen
-    grabFocus: true
     implicitWidth: 360
     implicitHeight: 480
-    color: Color.background
-
-    onVisibleChanged: if (!visible) isOpen = false
 
     ColumnLayout {
         anchors.fill: parent
@@ -28,61 +22,25 @@ PopupWindow {
 
         Keys.onEscapePressed: bluetoothPopup.hide()
 
+        // Header
         RowLayout {
             Layout.fillWidth: true
             spacing: 8
-            Text {
-                text: Icons.bluetooth
-                color: Color.text
-                font.family: Style.font.family
-                font.pixelSize: Style.font.iconLarge
-            }
-            Text {
-                text: Bluetooth.connectedDevice ? Bluetooth.connectedDevice : "Bluetooth"
-                color: Color.text
-                font.family: Style.font.family
-                font.pixelSize: Style.font.heading
-                font.bold: true
-            }
+            Text { text: Icons.bluetooth; color: Color.text; font.family: Style.font.family; font.pixelSize: Style.font.iconLarge }
+            Text { text: Bluetooth.connectedDevice ? Bluetooth.connectedDevice : "Bluetooth"; color: Color.text; font.family: Style.font.family; font.pixelSize: Style.font.heading; font.bold: true }
         }
 
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 1
-            color: Color.divider
-        }
+        Divider {}
 
         // Bluetooth toggle
         RowLayout {
             Layout.fillWidth: true
             spacing: 8
-            Text {
-                text: "Bluetooth"
-                color: Color.text
-                font.family: Style.font.family
-                font.pixelSize: Style.font.title
-                font.bold: true
-            }
+            Text { text: "Bluetooth"; color: Color.text; font.family: Style.font.family; font.pixelSize: Style.font.title; font.bold: true }
             Item { Layout.fillWidth: true }
-            Rectangle {
-                width: 44
-                height: 24
-                radius: 12
-                color: Bluetooth.enabled ? Color.success : Color.divider
-                Rectangle {
-                    x: Bluetooth.enabled ? 22 : 2
-                    y: 2
-                    width: 20
-                    height: 20
-                    radius: 10
-                    color: Color.text
-                    Behavior on x { NumberAnimation { duration: 150 } }
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: Bluetooth.toggle()
-                }
+            ToggleSwitch {
+                active: Bluetooth.enabled
+                onToggled: Bluetooth.toggle()
             }
         }
 
@@ -116,35 +74,13 @@ PopupWindow {
                         RowLayout {
                             anchors.centerIn: parent
                             spacing: 6
-                            Text {
-                                text: Bluetooth.scanning ? Icons.refresh : Icons.bluetooth
-                                color: Color.text
-                                font.family: Style.font.family
-                                font.pixelSize: Style.font.body
-                            }
-                            Text {
-                                text: Bluetooth.scanning ? "Scanning..." : "Scan"
-                                color: Color.text
-                                font.family: Style.font.family
-                                font.pixelSize: Style.font.body
-                            }
+                            Text { text: Bluetooth.scanning ? Icons.refresh : Icons.bluetooth; color: Color.text; font.family: Style.font.family; font.pixelSize: Style.font.body }
+                            Text { text: Bluetooth.scanning ? "Scanning..." : "Scan"; color: Color.text; font.family: Style.font.family; font.pixelSize: Style.font.body }
                         }
-                        MouseArea {
-                            id: scanArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: Bluetooth.startScan()
-                        }
+                        MouseArea { id: scanArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: Bluetooth.startScan() }
                     }
 
-                    Text {
-                        text: "Paired Devices"
-                        color: Color.textMuted
-                        font.family: Style.font.family
-                        font.pixelSize: Style.font.caption
-                        Layout.topMargin: 8
-                    }
+                    Text { text: "Paired Devices"; color: Color.textMuted; font.family: Style.font.family; font.pixelSize: Style.font.caption; Layout.topMargin: 8 }
 
                     Repeater {
                         model: Bluetooth.pairedDevices
@@ -159,104 +95,22 @@ PopupWindow {
                                 anchors.fill: parent
                                 anchors.margins: 8
                                 spacing: 8
-                                Text {
-                                    text: Icons.headphones
-                                    color: Color.text
-                                    font.family: Style.font.family
-                                    font.pixelSize: Style.font.title
-                                }
+                                Text { text: Icons.headphones; color: Color.text; font.family: Style.font.family; font.pixelSize: Style.font.title }
                                 ColumnLayout {
                                     spacing: 2
                                     Layout.fillWidth: true
-                                    Text {
-                                        text: modelData.name
-                                        color: isConnected ? Color.success : Color.text
-                                        font.family: Style.font.family
-                                        font.pixelSize: Style.font.body
-                                        font.bold: isConnected
-                                        elide: Text.ElideRight
-                                        Layout.fillWidth: true
-                                    }
-                                    Text {
-                                        text: isConnected ? "Connected" : "Paired"
-                                        color: Color.textMuted
-                                        font.family: Style.font.family
-                                        font.pixelSize: Style.font.caption
-                                    }
+                                    Text { text: modelData.name; color: isConnected ? Color.success : Color.text; font.family: Style.font.family; font.pixelSize: Style.font.body; font.bold: isConnected; elide: Text.ElideRight; Layout.fillWidth: true }
+                                    Text { text: isConnected ? "Connected" : "Paired"; color: Color.textMuted; font.family: Style.font.family; font.pixelSize: Style.font.caption }
                                 }
-                                Rectangle {
-                                    width: 28
-                                    height: 28
-                                    radius: 14
-                                    color: cBtn.containsMouse ? Color.divider : "transparent"
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: isConnected ? Icons.times : Icons.link
-                                        color: Color.text
-                                        font.family: Style.font.family
-                                        font.pixelSize: Style.font.body
-                                    }
-                                    MouseArea {
-                                        id: cBtn
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked: {
-                                            if (isConnected) Bluetooth.disconnect(modelData.address);
-                                            else Bluetooth.connect(modelData.address);
-                                        }
-                                    }
-                                }
-                                Rectangle {
-                                    width: 28
-                                    height: 28
-                                    radius: 14
-                                    color: rBtn.containsMouse ? Color.divider : "transparent"
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: Icons.trash
-                                        color: Color.text
-                                        font.family: Style.font.family
-                                        font.pixelSize: Style.font.body
-                                    }
-                                    MouseArea {
-                                        id: rBtn
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked: Bluetooth.remove(modelData.address)
-                                    }
-                                }
+                                IconButton { icon: isConnected ? Icons.times : Icons.link; onClicked: { if (isConnected) Bluetooth.disconnect(modelData.address); else Bluetooth.connect(modelData.address); } }
+                                IconButton { icon: Icons.trash; onClicked: Bluetooth.remove(modelData.address) }
                             }
-                            MouseArea {
-                                id: pArea
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    if (isConnected) Bluetooth.disconnect(modelData.address);
-                                    else Bluetooth.connect(modelData.address);
-                                }
-                            }
+                            MouseArea { id: pArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { if (isConnected) Bluetooth.disconnect(modelData.address); else Bluetooth.connect(modelData.address); } }
                         }
                     }
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 1
-                        Layout.topMargin: 8
-                        color: Color.divider
-                        visible: Bluetooth.availableDevices.length > 0
-                    }
-
-                    Text {
-                        text: "Available Devices"
-                        color: Color.textMuted
-                        font.family: Style.font.family
-                        font.pixelSize: Style.font.caption
-                        Layout.topMargin: 8
-                        visible: Bluetooth.availableDevices.length > 0
-                    }
+                    Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; Layout.topMargin: 8; color: Color.divider; visible: Bluetooth.availableDevices.length > 0 }
+                    Text { text: "Available Devices"; color: Color.textMuted; font.family: Style.font.family; font.pixelSize: Style.font.caption; Layout.topMargin: 8; visible: Bluetooth.availableDevices.length > 0 }
 
                     Repeater {
                         model: Bluetooth.availableDevices
@@ -269,48 +123,11 @@ PopupWindow {
                                 anchors.fill: parent
                                 anchors.margins: 8
                                 spacing: 8
-                                Text {
-                                    text: Icons.bluetooth
-                                    color: Color.text
-                                    font.family: Style.font.family
-                                    font.pixelSize: Style.font.title
-                                }
-                                Text {
-                                    text: modelData.name
-                                    color: Color.text
-                                    font.family: Style.font.family
-                                    font.pixelSize: Style.font.body
-                                    Layout.fillWidth: true
-                                    elide: Text.ElideRight
-                                }
-                                Rectangle {
-                                    width: 28
-                                    height: 28
-                                    radius: 14
-                                    color: pairBtn.containsMouse ? Color.divider : "transparent"
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: Icons.plus
-                                        color: Color.text
-                                        font.family: Style.font.family
-                                        font.pixelSize: Style.font.body
-                                    }
-                                    MouseArea {
-                                        id: pairBtn
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked: Bluetooth.pair(modelData.address)
-                                    }
-                                }
+                                Text { text: Icons.bluetooth; color: Color.text; font.family: Style.font.family; font.pixelSize: Style.font.title }
+                                Text { text: modelData.name; color: Color.text; font.family: Style.font.family; font.pixelSize: Style.font.body; Layout.fillWidth: true; elide: Text.ElideRight }
+                                IconButton { icon: Icons.plus; onClicked: Bluetooth.pair(modelData.address) }
                             }
-                            MouseArea {
-                                id: aArea
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: Bluetooth.connect(modelData.address)
-                            }
+                            MouseArea { id: aArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: Bluetooth.connect(modelData.address) }
                         }
                     }
                 }
@@ -318,9 +135,10 @@ PopupWindow {
         }
     }
 
+    // Override show to also refresh available devices
     function show(anchorWindow, anchorButtonItem) {
-        var pos = anchorButtonItem.mapToItem(anchorWindow.contentItem, 0, 0);
         Bluetooth.refreshAvailable();
+        var pos = anchorButtonItem.mapToItem(anchorWindow.contentItem, 0, 0);
         anchor.window = anchorWindow;
         anchor.rect = Qt.rect(
             pos.x + anchorButtonItem.width / 2 - implicitWidth / 2,
@@ -330,10 +148,5 @@ PopupWindow {
         );
         isOpen = true;
         visible = true;
-    }
-
-    function hide() {
-        isOpen = false;
-        visible = false;
     }
 }

@@ -9,9 +9,6 @@ import "bluetooth"
 Item {
     id: bluetooth
 
-    property bool enabled: Bluetooth.enabled
-    property string connectedDevice: Bluetooth.connectedDevice
-
     width: iconText.implicitWidth
     height: iconText.implicitHeight
 
@@ -20,7 +17,7 @@ Item {
         text: Bluetooth.enabled ? Icons.bluetooth : Icons.bluetoothOff
         color: Bluetooth.connectedDevice ? Color.success : BarConfig.textColor
         font.family: Style.font.family
-        font.pixelSize: Style.font.title + 2
+        font.pixelSize: Style.font.indicator
         verticalAlignment: Text.AlignVCenter
     }
 

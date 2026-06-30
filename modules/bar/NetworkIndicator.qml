@@ -9,19 +9,15 @@ import "network"
 Item {
     id: network
 
-    property bool connected: Network.connected
-    property string ssid: Network.ssid
-    property int signal: Network.signalStrength
-
     width: iconText.implicitWidth
     height: iconText.implicitHeight
 
     Text {
         id: iconText
-        text: Network.statusIcon()
+        text: Network.connected ? Icons.signalIcon(Network.signalStrength) : Icons.ethernet
         color: BarConfig.textColor
         font.family: Style.font.family
-        font.pixelSize: Style.font.title + 2
+        font.pixelSize: Style.font.indicator
         verticalAlignment: Text.AlignVCenter
     }
 
@@ -40,7 +36,7 @@ Item {
     NetworkPopup {
         id: networkPopup
         onRequestPassword: function(ssid) {
-            passwordDialog.show(bar, iconText, ssid);
+            passwordDialog.showDialog(bar, iconText, ssid);
         }
     }
 

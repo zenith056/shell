@@ -5,39 +5,27 @@ import QtQuick.Layouts
 import Quickshell
 import "../../../Commons"
 import "../../../utils"
+import "../../../components"
 
-PopupWindow {
+BasePopup {
     id: passwordDialog
 
-    property bool isOpen: false
     property string networkSsid: ""
     property string password: ""
     property Item anchorItem: null
 
-    visible: isOpen
-    grabFocus: true
     implicitWidth: 340
     implicitHeight: 180
 
-    color: Color.background
-
-    onVisibleChanged: {
-        if (!visible) {
-            isOpen = false;
-            passwordInput.text = "";
-        }
-    }
+    onVisibleChanged: if (!visible) passwordInput.text = ""
 
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 16
         spacing: 12
 
-        Keys.onEscapePressed: {
-            passwordDialog.hide();
-        }
+        Keys.onEscapePressed: passwordDialog.hide()
 
-        // Title
         Text {
             text: "Connect to " + networkSsid
             color: Color.text
@@ -48,14 +36,8 @@ PopupWindow {
             elide: Text.ElideRight
         }
 
-        // Divider
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 1
-            color: Color.divider
-        }
+        Divider {}
 
-        // Password label
         Text {
             text: "Password"
             color: Color.textMuted
@@ -69,8 +51,6 @@ PopupWindow {
             Layout.preferredHeight: 36
             color: Color.surface
             radius: 6
-            border.color: passwordInput.activeFocus ? Color.text : Color.divider
-            border.width: 1
 
             TextInput {
                 id: passwordInput
@@ -83,12 +63,8 @@ PopupWindow {
                 clip: true
                 focus: true
 
-                Keys.onReturnPressed: {
-                    passwordDialog.connectToNetwork();
-                }
-                Keys.onEnterPressed: {
-                    passwordDialog.connectToNetwork();
-                }
+                Keys.onReturnPressed: passwordDialog.connectToNetwork()
+                Keys.onEnterPressed: passwordDialog.connectToNetwork()
             }
         }
 
@@ -97,13 +73,10 @@ PopupWindow {
             Layout.fillWidth: true
             spacing: 8
 
-            // Cancel button
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 32
                 color: cancelArea.containsMouse ? Color.divider : "transparent"
-                border.color: Color.divider
-                border.width: 1
                 radius: 6
 
                 Text {
@@ -123,7 +96,6 @@ PopupWindow {
                 }
             }
 
-            // Connect button
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 32
@@ -155,7 +127,8 @@ PopupWindow {
         hide();
     }
 
-    function show(anchorWindow, anchorButtonItem, ssid: string) {
+    // Override show to accept ssid parameter
+    function showDialog(anchorWindow, anchorButtonItem, ssid) {
         networkSsid = ssid;
         var pos = anchorButtonItem.mapToItem(anchorWindow.contentItem, 0, 0);
         anchor.window = anchorWindow;
@@ -167,10 +140,5 @@ PopupWindow {
         );
         isOpen = true;
         visible = true;
-    }
-
-    function hide() {
-        isOpen = false;
-        visible = false;
     }
 }

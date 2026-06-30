@@ -1,0 +1,5 @@
+module qs.components
+Divider 1.0 Divider.qml
+ToggleSwitch 1.0 ToggleSwitch.qml
+IconButton 1.0 IconButton.qml
+BasePopup 1.0 BasePopup.qml

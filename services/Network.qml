@@ -21,16 +21,6 @@ Singleton {
     property string hotspotSsid: ""
     property string hotspotPassword: ""
 
-    // Returns a Nerd Font glyph based on connection type and signal strength
-    function statusIcon(): string {
-        if (!connected) return "󰤭";
-        if (!wifi) return "";
-        if (signalStrength > 75) return "󰤨";
-        if (signalStrength > 50) return "󰤥";
-        if (signalStrength > 25) return "󰤢";
-        return "󰤟";
-    }
-
     // Polls every 2 seconds for network status changes
     Timer {
         interval: 2000

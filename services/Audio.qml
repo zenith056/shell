@@ -12,7 +12,6 @@ Singleton {
     property real volume: 0.5
     property bool muted: false
     property string sinkName: ""
-    property real lastVolume: 0
 
     signal volumeChangedSignal()
 
@@ -40,7 +39,6 @@ Singleton {
                 if (match) {
                     var newVol = parseFloat(match[1]);
                     if (Math.abs(newVol - root.volume) > 0.001) {
-                        root.lastVolume = root.volume;
                         root.volume = newVol;
                         root.volumeChangedSignal();
                     }

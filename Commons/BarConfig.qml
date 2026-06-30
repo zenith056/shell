@@ -11,7 +11,7 @@ Singleton {
     property string position: "top"                               // Bar position: "top" or "bottom"
     property color backgroundColor: Color.background              // Background color from palette
     property color textColor: Color.text                          // Text color from palette
-    property color accentColor: "#ffffff"                           // White accent
+    property color accentColor: Color.text                          // White accent
     property real radius: 0                                       // Corner radius (0 = sharp)
     property string fontFamily: "FiraCode Nerd Font"              // Font family for all bar text
     property real fontSize: 14                                    // Font size in pixels

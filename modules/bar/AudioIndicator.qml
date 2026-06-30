@@ -26,7 +26,7 @@ Item {
     Connections {
         target: Audio
         function onVolumeChangedSignal() {
-            audioOsd.show(bar);
+            audioOsd.showOsd(bar);
         }
     }
 

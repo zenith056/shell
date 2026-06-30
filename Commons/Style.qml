@@ -29,6 +29,7 @@ Singleton {
         readonly property int body: 12
         readonly property int subtitle: 13
         readonly property int title: 14
+        readonly property int indicator: 16
         readonly property int heading: 16
         readonly property int large: 20
         readonly property int icon: 24

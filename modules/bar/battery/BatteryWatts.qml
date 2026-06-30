@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import "../../../Commons"
 import "../../../services"
+import "../../../utils"
 
 RowLayout {
     id: batteryWatts
@@ -14,7 +15,7 @@ RowLayout {
     spacing: 8
 
     Text {
-        text: "󰂄"  // nf-md-lightning_bolt
+        text: Icons.bolt
         color: Color.text
         font.family: Style.font.family
         font.pixelSize: Style.font.heading

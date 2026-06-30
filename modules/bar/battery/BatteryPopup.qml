@@ -6,40 +6,22 @@ import Quickshell
 import "../../../Commons"
 import "../../../services"
 import "../../../utils"
-import ".."
+import "../../../components"
 
-PopupWindow {
+BasePopup {
     id: batteryPopup
 
-    property bool isOpen: false
-
-    visible: isOpen
-    grabFocus: true
     implicitWidth: 400
     implicitHeight: 320
 
-    color: Color.background
-
-    onVisibleChanged: {
-        if (!visible) {
-            isOpen = false;
-        }
-    }
-
-    // Content container
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 20
         spacing: 16
 
-        Keys.onEscapePressed: {
-            batteryPopup.hide();
-        }
+        Keys.onEscapePressed: batteryPopup.hide()
 
-        // Header: Icon + Percentage
-        BatteryInfo {
-            Layout.fillWidth: true
-        }
+        BatteryInfo { Layout.fillWidth: true }
 
         // Battery bar
         Rectangle {
@@ -113,14 +95,8 @@ PopupWindow {
             }
         }
 
-        // Divider
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 1
-            color: Color.divider
-        }
+        Divider {}
 
-        // Power profile label
         Text {
             text: "Power Profile"
             color: Color.text
@@ -129,29 +105,6 @@ PopupWindow {
             font.bold: true
         }
 
-        // Power profile buttons
-        PowerProfileSelector {
-            Layout.fillWidth: true
-        }
-    }
-
-    // Show popup below the bar
-    function show(anchorWindow, anchorButtonItem) {
-        var pos = anchorButtonItem.mapToItem(anchorWindow.contentItem, 0, 0);
-        anchor.window = anchorWindow;
-        anchor.rect = Qt.rect(
-            pos.x + anchorButtonItem.width / 2 - implicitWidth / 2,
-            anchorWindow.height,
-            implicitWidth,
-            implicitHeight
-        );
-        isOpen = true;
-        visible = true;
-    }
-
-    // Hide the popup
-    function hide() {
-        isOpen = false;
-        visible = false
+        PowerProfileSelector { Layout.fillWidth: true }
     }
 }
