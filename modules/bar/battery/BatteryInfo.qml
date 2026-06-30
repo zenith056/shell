@@ -17,7 +17,7 @@ ColumnLayout {
     // Large battery icon
     Text {
         text: Icons.batteryIcon(Battery.available, Battery.charging, Battery.percentage)
-        color: Color.text
+        color: Battery.charging ? Color.success : Color.text
         font.family: Style.font.family
         font.pixelSize: Style.font.iconLarge
         Layout.alignment: Qt.AlignHCenter
@@ -33,12 +33,14 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
     }
 
-    // Charging status
+    // Charging status - fixed width to prevent layout shift
     Text {
-        text: charging ? "Charging" : "Discharging"
-        color: Color.text
+        text: "● " + (charging ? "Charging" : "Discharging")
+        color: Battery.charging ? Color.success : Color.text
         font.family: Style.font.family
         font.pixelSize: Style.font.body
         Layout.alignment: Qt.AlignHCenter
+        Layout.minimumWidth: 120
+        horizontalAlignment: Text.AlignHCenter
     }
 }

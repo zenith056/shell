@@ -50,7 +50,7 @@ PopupWindow {
             Rectangle {
                 width: parent.width * Battery.percentage
                 height: parent.height
-                color: Battery.charging ? "#888888" : Color.text
+                color: Battery.charging ? Color.success : Color.text
             }
         }
 
@@ -102,8 +102,12 @@ PopupWindow {
             Item { Layout.fillWidth: true }
 
             Text {
-                text: (Battery.charging ? "Charging" : "Discharging") + " " + Math.abs(Battery.changeRate).toFixed(1) + "W"
-                color: Color.text
+                text: {
+                    var watts = Math.abs(Battery.changeRate).toFixed(1) + "W";
+                    if (Battery.charging) return "● Charging " + watts;
+                    return "○ Discharging " + watts;
+                }
+                color: Battery.charging ? Color.success : Color.text
                 font.family: Style.font.family
                 font.pixelSize: Style.font.caption
             }

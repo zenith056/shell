@@ -14,4 +14,5 @@ Singleton {
     property color divider: "#333333"          // Subtle divider lines
     property color activeWorkspace: "#ffffff"  // Active workspace indicator
     property color inactiveWorkspace: "#666666" // Inactive workspace indicator
+    property color success: "#4ade80"          // Green for positive states (charging)
 }
