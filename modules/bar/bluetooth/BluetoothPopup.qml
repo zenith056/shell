@@ -87,6 +87,7 @@ BasePopup {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 52
+                            color: "transparent"
                             radius: 6
                             property bool isConnected: Bluetooth.connectedDevice === modelData.name
 
@@ -115,6 +116,7 @@ BasePopup {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 44
+                            color: "transparent"
                             radius: 6
                             RowLayout {
                                 anchors.fill: parent
