@@ -1,5 +1,5 @@
 // Volume OSD — compact bar anchored below the bar.
-// Appears on volume change with animation, auto-hides after 2 seconds.
+// Appears on volume change with bounce animation, auto-hides after 2 seconds.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -41,7 +41,8 @@ Item {
         id: enterAnim
         ParallelAnimation {
             Anim { target: card; property: "opacity"; from: 0; to: 1; type: Anim.DefaultEffects }
-            Anim { target: card; property: "y"; from: -10; to: 0; type: Anim.DefaultSpatial }
+            Anim { target: card; property: "y"; from: -30; to: 0; type: Anim.DefaultSpatial }
+            Anim { target: card; property: "scale"; from: 0.8; to: 1; type: Anim.DefaultSpatial }
         }
     }
 
@@ -49,7 +50,8 @@ Item {
         id: exitAnim
         ParallelAnimation {
             Anim { target: card; property: "opacity"; from: 1; to: 0; type: Anim.FastEffects }
-            Anim { target: card; property: "y"; from: 0; to: -10; type: Anim.FastEffects }
+            Anim { target: card; property: "y"; from: 0; to: -20; type: Anim.FastEffects }
+            Anim { target: card; property: "scale"; from: 1; to: 0.9; type: Anim.FastEffects }
         }
         ScriptAction { script: osdPopup.visible = false }
     }
@@ -70,7 +72,7 @@ Item {
         visible: false
         color: "transparent"
         implicitWidth: 350
-        implicitHeight: 40
+        implicitHeight: 44
         grabFocus: false
 
         Item {
@@ -82,6 +84,11 @@ Item {
                 color: Color.background
                 radius: 16
                 opacity: 0
+                scale: 0.8
+
+                Behavior on scale {
+                    Anim { type: Anim.DefaultSpatial }
+                }
 
                 RowLayout {
                     anchors.fill: parent
@@ -94,21 +101,27 @@ Item {
                         font.family: Style.font.family
                         font.pixelSize: Style.font.title
                         Layout.alignment: Qt.AlignVCenter
+
+                        Behavior on text {
+                            Anim { type: Anim.FastEffects }
+                        }
                     }
 
                     Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 3
+                        Layout.preferredHeight: 4
                         Layout.alignment: Qt.AlignVCenter
                         color: Color.divider
+                        radius: 2
 
                         Rectangle {
                             width: parent.width * Audio.volume
                             height: parent.height
                             color: Audio.muted ? Color.divider : Color.text
+                            radius: 2
 
                             Behavior on width {
-                                Anim { type: Anim.FastEffects }
+                                Anim { type: Anim.DefaultSpatial }
                             }
 
                             Behavior on color {
@@ -122,8 +135,13 @@ Item {
                         color: Color.text
                         font.family: Style.font.family
                         font.pixelSize: Style.font.bodySmall
+                        font.bold: true
                         Layout.alignment: Qt.AlignVCenter
-                        Layout.minimumWidth: 15
+                        Layout.minimumWidth: 20
+
+                        Behavior on text {
+                            Anim { type: Anim.FastEffects }
+                        }
                     }
                 }
             }
