@@ -34,11 +34,11 @@ Singleton {
         stdout: StdioCollector {
             waitForEnd: true
             onStreamFinished: {
-                var output = text;
+                var output = text.trim();
                 var match = output.match(/Volume:\s+([\d.]+)/);
                 if (match) {
                     var newVol = parseFloat(match[1]);
-                    if (Math.abs(newVol - root.volume) > 0.001) {
+                    if (!isNaN(newVol) && newVol >= 0 && newVol <= 1 && Math.abs(newVol - root.volume) > 0.001) {
                         root.volume = newVol;
                         root.volumeChangedSignal();
                     }
