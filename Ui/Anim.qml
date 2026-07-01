@@ -49,20 +49,20 @@ NumberAnimation {
 
     easing: {
         if (type === Anim.FastSpatial)
-            return Style.anim.expressiveFastSpatial;
+            return Style.anim.expressiveFastSpatialCurve;
         if (type === Anim.DefaultSpatial)
-            return Style.anim.expressiveDefaultSpatial;
+            return Style.anim.expressiveDefaultSpatialCurve;
         if (type === Anim.SlowSpatial)
-            return Style.anim.expressiveSlowSpatial;
+            return Style.anim.expressiveSlowSpatialCurve;
         if (type === Anim.FastEffects)
-            return Style.anim.expressiveFastEffects;
+            return Style.anim.expressiveFastEffectsCurve;
         if (type === Anim.DefaultEffects)
-            return Style.anim.expressiveDefaultEffects;
+            return Style.anim.expressiveDefaultEffectsCurve;
         if (type === Anim.SlowEffects)
-            return Style.anim.expressiveSlowEffects;
+            return Style.anim.expressiveSlowEffectsCurve;
 
         if (type >= Anim.EmphasizedSmall && type <= Anim.EmphasizedExtraLarge)
-            return Style.anim.emphasized;
-        return Style.anim.standard;
+            return Style.anim.emphasizedCurve;
+        return Style.anim.standardCurve;
     }
 }

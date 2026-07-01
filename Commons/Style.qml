@@ -41,16 +41,16 @@ Singleton {
         readonly property int expressiveSlowEffects: Math.round(300 * scale)
 
         // Expressive easing curves
-        readonly property var expressiveFastSpatial: Util.get(ConfigLoader.raw, "anim.curves.expressiveFastSpatial", [0.34, 1.56, 0.64, 1])
-        readonly property var expressiveDefaultSpatial: Util.get(ConfigLoader.raw, "anim.curves.expressiveDefaultSpatial", [0.34, 1.56, 0.64, 1])
-        readonly property var expressiveSlowSpatial: Util.get(ConfigLoader.raw, "anim.curves.expressiveSlowSpatial", [0.34, 1.56, 0.64, 1])
-        readonly property var expressiveFastEffects: Util.get(ConfigLoader.raw, "anim.curves.expressiveFastEffects", [0.22, 1, 0.36, 1])
-        readonly property var expressiveDefaultEffects: Util.get(ConfigLoader.raw, "anim.curves.expressiveDefaultEffects", [0.22, 1, 0.36, 1])
-        readonly property var expressiveSlowEffects: Util.get(ConfigLoader.raw, "anim.curves.expressiveSlowEffects", [0.22, 1, 0.36, 1])
+        readonly property var expressiveFastSpatialCurve: Util.get(ConfigLoader.raw, "anim.curves.expressiveFastSpatial", [0.34, 1.56, 0.64, 1])
+        readonly property var expressiveDefaultSpatialCurve: Util.get(ConfigLoader.raw, "anim.curves.expressiveDefaultSpatial", [0.34, 1.56, 0.64, 1])
+        readonly property var expressiveSlowSpatialCurve: Util.get(ConfigLoader.raw, "anim.curves.expressiveSlowSpatial", [0.34, 1.56, 0.64, 1])
+        readonly property var expressiveFastEffectsCurve: Util.get(ConfigLoader.raw, "anim.curves.expressiveFastEffects", [0.22, 1, 0.36, 1])
+        readonly property var expressiveDefaultEffectsCurve: Util.get(ConfigLoader.raw, "anim.curves.expressiveDefaultEffects", [0.22, 1, 0.36, 1])
+        readonly property var expressiveSlowEffectsCurve: Util.get(ConfigLoader.raw, "anim.curves.expressiveSlowEffects", [0.22, 1, 0.36, 1])
 
         // Standard and emphasized curves
-        readonly property var standard: Util.get(ConfigLoader.raw, "anim.curves.standard", [0.2, 0, 0, 1])
-        readonly property var emphasized: Util.get(ConfigLoader.raw, "anim.curves.emphasized", [0.34, 1.56, 0.64, 1])
+        readonly property var standardCurve: Util.get(ConfigLoader.raw, "anim.curves.standard", [0.2, 0, 0, 1])
+        readonly property var emphasizedCurve: Util.get(ConfigLoader.raw, "anim.curves.emphasized", [0.34, 1.56, 0.64, 1])
     }
 
     // Font tokens — read from ConfigLoader
