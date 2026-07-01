@@ -68,4 +68,4 @@
   - `bar/battery/` — Battery popup + power profiles. Module: `qs.modules.bar.battery`.
   - `bar/network/` — Network popup + WiFi password dialog. Module: `qs.modules.bar.network`.
   - `launcher/` — App launcher button + popup (LauncherButton, LauncherPopup, LauncherAppDelegate, LauncherSearchBar). Module: `Launcher`.
-- **Plugins/** — Standalone features (LockScreen). Module: `qs.Plugins.LockScreen`.
+  - `lockscreen/` — Custom Wayland session lock (LockScreen). Module: `qs.modules.lockscreen`.

@@ -60,8 +60,7 @@ modules/                               # UI feature modules
       LauncherPopup.qml                # App launcher popup
       LauncherAppDelegate.qml          # App list delegate
       LauncherSearchBar.qml            # Search bar component
-Plugins/
-  LockScreen/
+  lockscreen/
     LockScreen.qml                     # Wayland session lock (WlSessionLock)
 ```
 

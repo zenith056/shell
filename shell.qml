@@ -10,7 +10,7 @@ import "modules/launcher/launcher"
 import "modules/bar/battery"
 import "modules/bar/bluetooth"
 import "modules/bar/network"
-import "Plugins/LockScreen"
+import "modules/lockscreen"
 
 Scope {
     id: root

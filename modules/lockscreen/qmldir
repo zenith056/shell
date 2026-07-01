@@ -1,2 +1,2 @@
-module qs.Plugins.LockScreen
+module qs.modules.lockscreen
 LockScreen 1.0 LockScreen.qml
