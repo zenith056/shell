@@ -39,7 +39,7 @@
 - Use `RowLayout` with `Layout.alignment: Qt.AlignVCenter` instead of `Row` when children have different heights and need vertical centering.
 - Use `implicitWidth`/`implicitHeight` instead of `width`/`height` for components.
 - **All colors must come from `Color` singleton in Commons.** No hardcoded hex values in QML files.
-- **Color palette: black, white, gray only.** No accent colors (blue, green, red). Use `#000000` for background, `#ffffff` for text, `#333333` for dividers, `#666666` for inactive, `#999999` for muted text.
+- **Color palette: black, white, gray only.** No accent colors in code. Config-defined colors (`success`, `lowBattery`) are loaded from `shell.json` via `ConfigLoader`. Use `#000000` for background, `#ffffff` for text, `#333333` for dividers, `#666666` for inactive, `#999999` for muted text.
 - **No borders.** Popups and UI elements must not use `border.color` or `border.width`.
 - **Nerd Font glyphs must use Unicode escapes** (e.g., `\uf028`) not raw characters.
 - **Do not modify or move icons in Icons.qml.** The user has manually set specific glyphs. Never change them without explicit permission.
@@ -47,24 +47,25 @@
 
 ## Popup Management
 
-- **PopupManager singleton** (`Commons/PopupManager.qml`) handles mutual exclusion between popups.
-- All popups extending `BasePopup` auto-register with PopupManager on `show()` and unregister on hide.
-- When a popup opens, `PopupManager.closeOthers(self)` closes all other tracked popups.
-- **Volume OSD is independent** — it uses a separate `PopupWindow` + invisible `PanelWindow` anchor, does NOT register with PopupManager, and does not affect other popups.
-- Clicking the bar background calls `PopupManager.closeAll()` to close all popups.
-- **PopupWindow cannot be referenced by `id` from sibling components** — it's a Wayland surface. Popups must be children of their trigger component (e.g., `BluetoothPopup` inside `BluetoothIndicator`).
+- **PopupControl singleton** (`Commons/PopupControl.qml`) handles mutual exclusion between popups.
+- Indicators register themselves with `PopupControl` in `Component.onCompleted` and call `PopupControl.toggle(name, triggerItem)` to open/close.
+- When a popup opens, `PopupControl` closes the previously open popup automatically.
+- **Launcher uses a separate system** — `LauncherState` singleton mediates between `LauncherButton` and `LauncherPopup`. It is independent of PopupControl.
+- **Volume OSD is independent** — it uses a separate `PopupWindow` + invisible `PanelWindow` anchor, does NOT register with PopupControl, and does not affect other popups.
+- Clicking the bar background calls `PopupControl.close()` to close all popups.
+- **PanelWindow cannot be referenced by `id` from sibling components** — it's a Wayland surface. Popups must be children of their trigger component (e.g., `BluetoothPopup` inside `BluetoothIndicator`).
 
 ## Architecture
 
-- **Commons/** — Shared singletons (Color, Style, Util, BarConfig, Config, PopupManager, PanelKeyCatcher). Module: `qs.Commons`.
-- **services/** — System integration singletons (Audio, Battery, Bluetooth, Network, PowerProfile, Time, Workspaces).
+- **Commons/** — Shared singletons (Color, Style, Util, BarConfig, ConfigLoader, PopupControl, LauncherState). Module: `qs.Commons`.
+- **services/** — System integration singletons (Audio, Battery, Bluetooth, Network, PowerProfile, Time, Workspaces, AppLauncherService). Module: `Services`.
+- **utils/** — Shared helpers (Icons, Paths). Module: `Utils`.
+- **Ui/** — Reusable UI primitives (PanelController, PopupCard, Toggle, PanelHero, PanelSectionHeader, PanelSeparator). Module: `qs.Ui`.
 - **modules/** — UI feature modules organized by component.
-  - `bar/` — Status bar (Bar, Clock, indicators).
-  - `bar/audio/` — Volume OSD (AudioOsd via PanelWindow+PopupWindow).
-  - `bar/bluetooth/` — Bluetooth popup (BluetoothPopup).
-  - `bar/battery/` — Battery popup + power profiles.
-  - `bar/network/` — Network popup + WiFi password dialog.
-- **utils/** — Shared helpers (Icons, Paths).
-- **components/** — Reusable QML primitives (BasePopup, Divider, IconButton, ToggleSwitch).
-- **UI/** — Reusable form controls (ConfirmDialog, NumberField, ButtonGroup, SearchableDropdown, MultiSelect). Module: `qs.UI`.
-- **Plugins/** — Standalone features (CommandMenu, Clipboard, EmojiPicker, Notifications, LockScreen). Each plugin is a self-contained module.
+  - `bar/` — Status bar (Bar, Clock, indicators). Module: `Bar`.
+  - `bar/audio/` — Volume OSD (AudioOsd via PanelWindow+PopupWindow). Module: `qs.modules.bar.audio`.
+  - `bar/bluetooth/` — Bluetooth popup (BluetoothPopup). Module: `qs.modules.bar.bluetooth`.
+  - `bar/battery/` — Battery popup + power profiles. Module: `qs.modules.bar.battery`.
+  - `bar/network/` — Network popup + WiFi password dialog. Module: `qs.modules.bar.network`.
+  - `launcher/` — App launcher button + popup (LauncherButton, LauncherPopup, LauncherAppDelegate, LauncherSearchBar). Module: `Launcher`.
+- **Plugins/** — Standalone features (LockScreen). Module: `qs.Plugins.LockScreen`.

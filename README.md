@@ -5,53 +5,61 @@ Modular Wayland status bar built with [Quickshell](https://quickshell.org) for N
 ## Project Structure
 
 ```
-shell.qml                          # Entry point
-shell.json                         # Runtime config (hot-reload)
-Commons/                           # Shared singletons (qs.Commons)
-  Color.qml                        # Global color palette
-  Style.qml                        # Spacing, typography tokens
-  Util.qml                         # Utility functions
-  BarConfig.qml                    # Bar appearance settings
-  Config.qml                       # JSON config loader
-  PopupManager.qml                 # Popup mutual exclusion
-services/                          # System integration singletons
-  Audio.qml                        # PipeWire volume (wpctl)
-  Battery.qml                      # UPower battery monitoring
-  Bluetooth.qml                    # Quickshell.Bluetooth native API
-  Network.qml                      # Quickshell.Networking native API
-  PowerProfile.qml                 # Power profiles (D-Bus)
-  Time.qml                         # Clock (12h/24h)
-  Workspaces.qml                   # Niri workspace tracking (IPC)
-modules/                           # UI feature modules
+shell.qml                              # Entry point
+shell.json                             # Runtime config (hot-reload)
+Commons/                               # Shared singletons (qs.Commons)
+  Color.qml                            # Global color palette
+  Style.qml                            # Spacing, typography tokens
+  Util.qml                             # Utility functions
+  BarConfig.qml                        # Bar appearance settings
+  ConfigLoader.qml                     # JSON config loader
+  PopupControl.qml                     # Popup mutual exclusion
+  LauncherState.qml                    # Launcher state mediator
+services/                              # System integration singletons (Services)
+  Audio.qml                            # PipeWire volume (wpctl)
+  Battery.qml                          # UPower battery monitoring
+  Bluetooth.qml                        # Quickshell.Bluetooth native API
+  Network.qml                          # Quickshell.Networking native API
+  PowerProfile.qml                     # Power profiles (D-Bus)
+  Time.qml                             # Clock (12h/24h)
+  Workspaces.qml                       # Niri workspace tracking (IPC)
+  AppLauncherService.qml               # App filtering and launch
+utils/                                 # Shared helpers (Utils)
+  Icons.qml                            # Nerd Font glyphs
+  Paths.qml                            # Filesystem paths
+Ui/                                     # Reusable UI primitives (qs.Ui)
+  PanelController.qml                  # Popup state machine singleton
+  PopupCard.qml                        # Card container for popup content
+  Toggle.qml                           # Toggle switch component
+  PanelHero.qml                        # Hero section for popups
+  PanelSectionHeader.qml               # Section header label
+  PanelSeparator.qml                   # Horizontal divider
+modules/                               # UI feature modules
   bar/
-    Bar.qml                        # Main bar (PanelWindow)
-    Clock.qml                      # Time display
-    AudioIndicator.qml             # Volume icon + OSD trigger
-    BluetoothIndicator.qml         # Bluetooth icon + popup
-    NetworkIndicator.qml           # Network icon + popup
-    BatteryIndicator.qml           # Battery icon + popup
-    WorkspaceIndicator.qml         # Workspace dots
+    Bar.qml                            # Main bar (PanelWindow)
+    Clock.qml                          # Time display
+    AudioIndicator.qml                 # Volume icon + OSD trigger
+    BluetoothIndicator.qml             # Bluetooth icon + popup
+    NetworkIndicator.qml               # Network icon + popup
+    BatteryIndicator.qml               # Battery icon + popup
+    WorkspaceIndicator.qml             # Workspace numbers
     audio/
-      AudioOsd.qml                 # Volume OSD (PanelWindow + PopupWindow)
+      AudioOsd.qml                     # Volume OSD (PanelWindow + PopupWindow)
     bluetooth/
-      BluetoothPopup.qml           # Device list, scan, pair
+      BluetoothPopup.qml               # Device list, scan, pair
     battery/
-      BatteryPopup.qml             # Battery info + power profiles
-      BatteryInfo.qml              # Icon, percentage, status
-      BatteryWatts.qml             # Power consumption
-      BatteryHealth.qml            # Health, capacity, model
-      PowerProfileSelector.qml     # Power profile buttons
+      BatteryPopup.qml                 # Battery info + power profiles
     network/
-      NetworkPopup.qml             # WiFi network list
-      PasswordDialog.qml           # WiFi password input
-components/                        # Reusable QML primitives (qs.components)
-  BasePopup.qml                    # Popup base class (PopupWindow)
-  Divider.qml                      # Horizontal divider
-  IconButton.qml                   # Circular icon button
-  ToggleSwitch.qml                 # Sliding toggle
-utils/                             # Shared helpers (qs.utils)
-  Icons.qml                        # Nerd Font glyphs
-  Paths.qml                        # Filesystem paths
+      NetworkPopup.qml                 # WiFi network list + password dialog
+  launcher/
+    LauncherButton.qml                 # Launcher button for status bar
+    launcher/
+      LauncherPopup.qml                # App launcher popup
+      LauncherAppDelegate.qml          # App list delegate
+      LauncherSearchBar.qml            # Search bar component
+Plugins/
+  LockScreen/
+    LockScreen.qml                     # Wayland session lock (WlSessionLock)
 ```
 
 ## Install
