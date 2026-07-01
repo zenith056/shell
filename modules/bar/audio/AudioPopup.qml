@@ -115,7 +115,11 @@ Item {
                         radius: 2
 
                         Rectangle {
-                            width: parent.width * Audio.volume
+                            width: {
+                                var vol = Audio.volume
+                                if (isNaN(vol) || vol < 0 || vol > 1) return 0
+                                return parent.width * vol
+                            }
                             height: parent.height
                             color: Audio.muted ? Color.divider : Color.text
                             radius: 2
@@ -131,7 +135,12 @@ Item {
                     }
 
                     Text {
-                        text: Audio.muted ? "Mute" : Math.round(Audio.volume * 100)
+                        text: {
+                            if (Audio.muted) return "Mute"
+                            var vol = Audio.volume
+                            if (isNaN(vol) || vol < 0 || vol > 1) return "0"
+                            return Math.round(vol * 100).toString()
+                        }
                         color: Color.text
                         font.family: Style.font.family
                         font.pixelSize: Style.font.bodySmall
