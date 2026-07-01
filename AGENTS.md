@@ -60,10 +60,10 @@
 - **Commons/** — Shared singletons (Color, Style, Util, BarConfig, ConfigLoader, PopupControl, LauncherState). Module: `qs.Commons`.
 - **services/** — System integration singletons (Audio, Battery, Bluetooth, Network, PowerProfile, Time, Workspaces, AppLauncherService). Module: `Services`.
 - **utils/** — Shared helpers (Icons, Paths). Module: `Utils`.
-- **Ui/** — Reusable UI primitives (PanelController, PopupCard, Toggle, PanelHero, PanelSectionHeader, PanelSeparator). Module: `qs.Ui`.
+- **Ui/** — Reusable UI primitives (PanelController, PopupCard, Toggle, PanelHero, PanelSectionHeader, PanelSeparator, Anim, CAnim, AnimLoader). Module: `qs.Ui`.
 - **modules/** — UI feature modules organized by component.
   - `bar/` — Status bar (Bar, Clock, indicators). Module: `Bar`.
-  - `bar/audio/` — Volume OSD (AudioOsd via PanelWindow+PopupWindow). Module: `qs.modules.bar.audio`.
+  - `bar/audio/` — Volume OSD (AudioPopup via PanelWindow+PopupWindow). Module: `qs.modules.bar.audio`.
   - `bar/bluetooth/` — Bluetooth popup (BluetoothPopup). Module: `qs.modules.bar.bluetooth`.
   - `bar/battery/` — Battery popup + power profiles. Module: `qs.modules.bar.battery`.
   - `bar/network/` — Network popup + WiFi password dialog. Module: `qs.modules.bar.network`.

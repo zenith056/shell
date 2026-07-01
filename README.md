@@ -34,6 +34,9 @@ Ui/                                     # Reusable UI primitives (qs.Ui)
   PanelHero.qml                        # Hero section for popups
   PanelSectionHeader.qml               # Section header label
   PanelSeparator.qml                   # Horizontal divider
+  Anim.qml                             # Animation primitives
+  CAnim.qml                            # Composed animation component
+  AnimLoader.qml                       # Lazy animation loader
 modules/                               # UI feature modules
   bar/
     Bar.qml                            # Main bar (PanelWindow)
@@ -44,7 +47,7 @@ modules/                               # UI feature modules
     BatteryIndicator.qml               # Battery icon + popup
     WorkspaceIndicator.qml             # Workspace numbers
     audio/
-      AudioOsd.qml                     # Volume OSD (PanelWindow + PopupWindow)
+      AudioPopup.qml                   # Volume OSD (PanelWindow + PopupWindow)
     bluetooth/
       BluetoothPopup.qml               # Device list, scan, pair
     battery/
@@ -91,6 +94,7 @@ quickshell -c ~/projects/shell
 - WiFi network scanning and connection (WPA/WPA2 support)
 - Volume OSD with auto-hide
 - Battery info with power profile selector
+- Custom lockscreen (WlSessionLock)
 - Mutual exclusion popups (only one open at a time)
 - Click bar background to close all popups
 
