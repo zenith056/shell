@@ -29,8 +29,11 @@ Scope {
             if (name === "bluetooth" || name === "network" || name === "battery") {
                 PopupControl.toggle(name, null);
             } else if (name === "launcher") {
-                if (LauncherState.isOpen) LauncherState.hide();
-                else PopupControl.toggle("launcher", null);
+                if (LauncherState.isOpen) {
+                    LauncherState.hide();
+                } else {
+                    LauncherState.show(null, null);
+                }
             }
         }
 
