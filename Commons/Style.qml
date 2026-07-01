@@ -11,7 +11,8 @@ Singleton {
     property string fontFamily: "FiraCode Nerd Font"
     property int fontBaseSize: 14
 
-    // Spacing tokens
+    // General
+    readonly property int cornerRadius: 6
     readonly property QtObject spacing: QtObject {
         readonly property int xs: 3
         readonly property int sm: 4

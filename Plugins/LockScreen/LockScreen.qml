@@ -4,6 +4,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
+import "../../Commons"
 
 WlSessionLock {
     id: lock
@@ -21,7 +22,7 @@ WlSessionLock {
     }
 
     surface: WlSessionLockSurface {
-        color: "#000000"
+        color: Color.background
 
         // FocusScope captures all keyboard input
         FocusScope {
@@ -44,7 +45,7 @@ WlSessionLock {
                 Text {
                     id: timeText
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: "#ffffff"
+                    color: Color.text
                     font.family: Style.font.family
                     font.pixelSize: 96
                     font.bold: true
@@ -53,7 +54,7 @@ WlSessionLock {
                 Text {
                     id: dateText
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: "#999999"
+                    color: Color.textMuted
                     font.family: Style.font.family
                     font.pixelSize: 24
                 }
@@ -61,7 +62,7 @@ WlSessionLock {
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "Press Escape to unlock"
-                    color: "#666666"
+                    color: Color.inactiveWorkspace
                     font.family: Style.font.family
                     font.pixelSize: 16
                     anchors.topMargin: 40

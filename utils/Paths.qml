@@ -1,6 +1,7 @@
 // Filesystem paths singleton.
 // Provides standard directories for config, cache, and app data.
 pragma Singleton
+import Quickshell
 import QtQuick
 
 QtObject {

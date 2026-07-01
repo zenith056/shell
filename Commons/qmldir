@@ -1,10 +1,8 @@
 module qs.Commons
 singleton Color 1.0 Color.qml
 singleton Style 1.0 Style.qml
-singleton Util 1.0 Util.qml
 singleton BarConfig 1.0 BarConfig.qml
 singleton Config 1.0 Config.qml
 singleton PopupManager 1.0 PopupManager.qml
 singleton LauncherState 1.0 LauncherState.qml
 singleton PopupControl 1.0 PopupControl.qml
-PanelKeyCatcher 1.0 PanelKeyCatcher.qml

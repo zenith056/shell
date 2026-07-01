@@ -16,4 +16,5 @@ Singleton {
     property string fontFamily: "FiraCode Nerd Font"              // Font family for all bar text
     property real fontSize: 14                                    // Font size in pixels
     property var modules: ["clock", "workspaces", "battery", "network"]  // Active bar modules
+    property string screen: ""                                        // Screen name (empty = default)
 }

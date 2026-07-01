@@ -1,8 +1,3 @@
 module qs.UI
-ConfirmDialog 1.0 ConfirmDialog.qml
-NumberField 1.0 NumberField.qml
-ButtonGroup 1.0 ButtonGroup.qml
-SearchableDropdown 1.0 SearchableDropdown.qml
-MultiSelect 1.0 MultiSelect.qml
 PanelSeparator 1.0 PanelSeparator.qml
 PanelSectionHeader 1.0 PanelSectionHeader.qml

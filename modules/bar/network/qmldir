@@ -1,3 +1,2 @@
 module qs.modules.bar.network
 NetworkPopup 1.0 NetworkPopup.qml
-PasswordDialog 1.0 PasswordDialog.qml
