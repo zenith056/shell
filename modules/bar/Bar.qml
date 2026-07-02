@@ -61,6 +61,7 @@ PanelWindow {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 16
 
+            SystemTrayIndicator { Layout.alignment: Qt.AlignVCenter }
             AudioIndicator { Layout.alignment: Qt.AlignVCenter }
             BluetoothIndicator { Layout.alignment: Qt.AlignVCenter }
             NetworkIndicator { Layout.alignment: Qt.AlignVCenter }

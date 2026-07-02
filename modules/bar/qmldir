@@ -5,4 +5,5 @@ BatteryIndicator 1.0 BatteryIndicator.qml
 BluetoothIndicator 1.0 BluetoothIndicator.qml
 Clock 1.0 Clock.qml
 NetworkIndicator 1.0 NetworkIndicator.qml
+SystemTrayIndicator 1.0 SystemTrayIndicator.qml
 WorkspaceIndicator 1.0 WorkspaceIndicator.qml
