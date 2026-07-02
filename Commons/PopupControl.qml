@@ -16,6 +16,7 @@ Item {
     property Item bluetoothIndicator: null
     property Item networkIndicator: null
     property Item batteryIndicator: null
+    property Item audioIndicator: null
 
     property bool cardHovered: false
     property bool indicatorHovered: false
@@ -75,6 +76,7 @@ Item {
         if (name === "bluetooth") return bluetoothIndicator
         if (name === "network") return networkIndicator
         if (name === "battery") return batteryIndicator
+        if (name === "audio") return audioIndicator
         return null
     }
 }

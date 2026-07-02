@@ -3,3 +3,8 @@ Anim 1.0 Anim.qml
 CAnim 1.0 CAnim.qml
 PanelSectionHeader 1.0 PanelSectionHeader.qml
 PanelSeparator 1.0 PanelSeparator.qml
+PopupHeader 1.0 PopupHeader.qml
+PopupToggleRow 1.0 PopupToggleRow.qml
+PopupListBox 1.0 PopupListBox.qml
+PopupActionButton 1.0 PopupActionButton.qml
+

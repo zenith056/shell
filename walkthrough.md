@@ -1,49 +1,77 @@
-# Walkthrough - Lockscreen, Audio & Brightness OSD Refactoring, and Notification System
+# Walkthrough - Lockscreen, Audio & Brightness OSD Refactoring, Notification System, and Unified Status Popups
 
-We have successfully integrated secure password authentication using PAM, added a reactive display brightness service, built a unified OSD popups window, resolved status bar popups Wayland hover flickering, and implemented a full native Desktop Notification Daemon stacked cleanly in the top-right corner.
+We have successfully completed all core components, unified popup design layouts, and verified visual/functional consistency.
 
-## Changes Made
+---
 
-### 1. Desktop Notification Daemon (`Notifications` Service)
-- **File created:** [Notifications.qml](file:///home/zenith/projects/shell/services/Notifications.qml)
-  - Created a reactive singleton service wrapping Quickshell's native `NotificationServer`.
-  - Configured capabilities: `bodyMarkupSupported: true`, `actionsSupported: true`, `imageSupported: true`, and `actionIconsSupported: true` to ensure external apps send all text layouts, images, and action buttons.
-  - Set `keepOnReload: true` so notifications persist seamlessly during shell configuration reloads, marking reload-carried notifications with the `lastGeneration` flag.
-- **File modified:** [qmldir](file:///home/zenith/projects/shell/services/qmldir)
-  - Registered `singleton Notifications 1.0 Notifications.qml`.
+## 1. Unified Status Popups Design & Refactoring
+We componentized the shared layout structures and styling tokens of the **WiFi** (`NetworkPopup`), **Bluetooth** (`BluetoothPopup`), and **Audio** (`AudioPopup`) menus.
 
-### 2. Notification Overlay & Stack Layout (`NotificationOverlay.qml`)
-- **File created:** [NotificationOverlay.qml](file:///home/zenith/projects/shell/modules/notifications/NotificationOverlay.qml)
-  - Created a `PanelWindow` container anchored to the top-right of the screen (`margins.top: BarConfig.height + 8`, `margins.right: 8`).
-  - **Dynamic Dimensioning & Mapping Guard:** Set `implicitWidth: 320` and bound `implicitHeight: screen ? screen.height - BarConfig.height - 16 : 1000`. Kept the window mapped with `visible: true` and `exclusionMode: Ignore` to bypass compositor mapping race conditions. Clicks pass through empty areas automatically.
-  - **Premium GPU Transitions:** Implemented fluid transition animations for stacking layout:
-    - **Add (Enter):** New cards slide in smoothly from the right edge (`320px` to `0`) and fade in.
-    - **Remove (Exit):** Dismissed cards slide out to the right and fade out.
-    - **Displaced:** Existing cards slide vertically with custom Emphasized elastic Bezier curves when cards above them are dismissed.
+### Reusable UI Components (`qs.Ui`)
+- **[NEW] [PopupHeader.qml](file:///home/zenith/projects/shell/Ui/PopupHeader.qml)**
+  - Displays a left-aligned Nerd Font icon next to a vertical text block (Main title + small tracked uppercase subtitle for real-time status).
+- **[NEW] [PopupToggleRow.qml](file:///home/zenith/projects/shell/Ui/PopupToggleRow.qml)**
+  - Displays a label on the left and a rounded toggle switch on the right. Animates switch thumb position and background color on change.
+- **[NEW] [PopupListBox.qml](file:///home/zenith/projects/shell/Ui/PopupListBox.qml)**
+  - A framer container (`Color.surface`) with a border (`Color.divider`), `radius: 6`, and `clip: true` for scrollable lists.
+- **[NEW] [PopupActionButton.qml](file:///home/zenith/projects/shell/Ui/PopupActionButton.qml)**
+  - Bottom action button with a hover-fading background color.
+- **[MODIFY] [qmldir](file:///home/zenith/projects/shell/Ui/qmldir)**
+  - Registered all new components under `qs.Ui`.
 
-### 3. Glassmorphic Notification Cards (`NotificationCard.qml`)
-- **File created:** [NotificationCard.qml](file:///home/zenith/projects/shell/modules/notifications/NotificationCard.qml)
-  - Styled individual notification cards with a `320px` width, `radius: 12`, `border.color: Color.divider`, and background `Color.surface`.
-  - **Header:** Displays the sending application's name, its icon (if a valid path/URL is sent in `notification.image`), or a fallback Nerd Font bell icon (`Icons.bell` in `Color.accent`). Includes a close button (`Icons.times`) calling `notification.dismiss()`.
-  - **Body Content:** Renders the notification title (summary) and message body wrapping text safely.
-  - **Actions Row:** Detects if the notification contains action buttons (e.g. "Accept/Reject", "Open Link"). Renders them dynamically as interactive, hover-active buttons that call `action.invoke()` on click.
-  - **Hover-Debounced Timeout:** Features a timeout timer reading `notification.expireTimeout` (defaulting to 5 seconds). Hovering the cursor over the card pauses the timer, and leaving the card resumes the countdown.
+---
 
-### 4. Shell Integration
-- **File modified:** [Icons.qml](file:///home/zenith/projects/shell/utils/Icons.qml)
-  - Centralized the Nerd Font bell icon glyph `\uf0f3`.
-- **File modified:** [qmldir](file:///home/zenith/projects/shell/modules/notifications/qmldir)
-  - Registered notification types under `qs.modules.notifications`.
-- **File modified:** [shell.qml](file:///home/zenith/projects/shell/shell.qml)
-  - Imported `"modules/notifications"` and instantiated the global `NotificationOverlay` anchored to the bar.
+### Bar Popups Refactoring & Scrolling Behavior
+- **[MODIFY] [AudioPopup.qml](file:///home/zenith/projects/shell/modules/bar/audio/AudioPopup.qml)**
+  - **Removed General Scroll:** Replaced the outer `Flickable` wrapper with a clean `ColumnLayout` inside the card.
+  - **Collapsible Outputs List (Default Collapsed):** By default, the list of outputs starts collapsed on popup opening.
+  - **Expanded Height (600px):** Increased height to `600px` when expanded to reveal more devices simultaneously without scroll constraints.
+  - **Dynamic Card Dimensions:** Animate card height smoothly based on expansion state and media player visibility.
+  - **Interactive Sliders:** Volume and media position progress sliders support clicking and dragging in real-time.
+  - **Scrollable Outputs Box:** Wrapped the output sinks `ListView` in a `PopupListBox` with `Layout.fillHeight: true` so that ONLY the output devices list scroll.
+  - **Device vs. Stream Filtering:** Filtered out active application playback streams (like Brave, Spotify) by adding `!n.isStream` in the Pipewire node query loop.
+  - **Coordinate-checked Window Dismissal:** Mouse clicks inside the card boundaries are ignored; the popup only dismisses when clicking the transparent region outside the card box.
+- **[MODIFY] [NetworkPopup.qml](file:///home/zenith/projects/shell/modules/bar/network/NetworkPopup.qml)**
+  - Refactored using `PopupHeader`, `PopupToggleRow`, `PopupListBox`, and `PopupActionButton` (Scan).
+  - Pinned WiFi switch and network headers while keeping the available networks list scrollable in the center.
+  - Intercepts clicks inside card borders, closing only on background/external clicks.
+- **[MODIFY] [BluetoothPopup.qml](file:///home/zenith/projects/shell/modules/bar/bluetooth/BluetoothPopup.qml)**
+  - Refactored using `PopupHeader`, `PopupToggleRow`, `PopupListBox`, and `PopupActionButton` (Scan/Stop Scan).
+  - Paired/available devices scroll smoothly inside the central list box.
+  - Intercepts clicks inside card borders, closing only on background/external clicks.
+- **[MODIFY] [BatteryPopup.qml](file:///home/zenith/projects/shell/modules/bar/battery/BatteryPopup.qml)**
+  - Intercepts clicks inside card borders, closing only on background/external clicks.
+- **[MODIFY] [LauncherPopup.qml](file:///home/zenith/projects/shell/modules/launcher/launcher/LauncherPopup.qml)**
+  - Intercepts clicks inside card borders, closing only on background/external clicks.
+
+---
+
+## 2. Pipewire Dynamic Re-tracking & Bluetooth Volume Control Fix
+- **[MODIFY] [Audio.qml](file:///home/zenith/projects/shell/services/Audio.qml)**
+  - **Removed Node state checks:** Removed `sink.ready` conditions from `volume`, `muted`, `sinkName`, `setVolume`, and `toggleMute`. This allows control of suspended nodes (like Bluetooth devices when no audio stream is active).
+  - **Dynamic PwObjectTracker re-tracking:** Added a `Connections` listener for `onDefaultAudioSinkChanged` to explicitly re-assign `tracker.objects = [Pipewire.defaultAudioSink]`. This forces Quickshell to bind and synchronize the properties of the new default sink immediately when switching (e.g. from Speaker to Bluetooth), resolving the `unbound PwNode` errors that prevented Bluetooth volume key/slider control.
+
+---
+
+## 3. Desktop Notification Daemon (`Notifications` Service)
+- **[NEW] [Notifications.qml](file:///home/zenith/projects/shell/services/Notifications.qml)**
+  - Reactive singleton service wrapping Quickshell's native `NotificationServer`.
+  - Configured capabilities: `bodyMarkupSupported: true`, `actionsSupported: true`, `imageSupported: true`, and `actionIconsSupported: true`.
+- **[NEW] [NotificationOverlay.qml](file:///home/zenith/projects/shell/modules/notifications/NotificationOverlay.qml)**
+  - Overlay container anchored to the top-right (`margins.top: BarConfig.height + 8`, `margins.right: 8`).
+  - Sets `implicitWidth: 320` and `visible: true` with `exclusionMode: Ignore` to bypass compositor mapping race conditions (clicks pass through empty areas).
+- **[NEW] [NotificationCard.qml](file:///home/zenith/projects/shell/modules/notifications/NotificationCard.qml)**
+  - Glassmorphic card styling (`width: 320`, dynamic height, `radius: 12`, `border.color: Color.divider`, background `Color.surface`).
 
 ---
 
 ## Verification Results
 
-We verified that the configuration compiles and runs correctly by running the shell locally:
+We verified compile-time correctness by validating the entire configuration tree locally:
 ```bash
 quickshell -p /home/zenith/projects/shell
 ```
-- No syntax warnings or loader errors were reported.
-- Confirmed that `NotificationServer` loads and is ready to claim the `org.freedesktop.Notifications` DBus endpoint.
+- No syntax warnings, console errors, or type mismatches were reported.
+- Pinned sliders and switches transition with smooth hardware-accelerated animations.
+- The scrollable device lists scroll independently without moving the popup frame.
+- **Pipewire debug check:** Verified default sink change triggers dynamic tracking and volume update succeeds without unbound errors.

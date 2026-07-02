@@ -1,2 +1,2 @@
-module qs.modules.bar.audio
+AudioPopup 1.0 AudioPopup.qml
 OsdWindow 1.0 OsdWindow.qml

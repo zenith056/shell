@@ -15,6 +15,8 @@ QtObject {
     readonly property string unmute: "\uf04b"        // nf-fa-play
     readonly property string plus: "\uf067"          // nf-fa-plus
     readonly property string minus: "\uf068"         // nf-fa-minus
+    readonly property string skipBack: "\udb81\udcae"    // nf-md-skip_previous
+    readonly property string skipForward: "\udb81\udcad" // nf-md-skip_next
 
     // Battery icons
     readonly property string batteryOutline: "\udb80\udc8e"   // nf-md-battery_outline

@@ -21,6 +21,7 @@ Scope {
     BatteryPopup { }
     BluetoothPopup { }
     NetworkPopup { }
+    AudioPopup { }
     Bar { id: mainBar }
     LockScreen { id: lockScreen }
     OsdWindow { barWindow: mainBar }
@@ -31,7 +32,7 @@ Scope {
         target: "shell"
 
         function togglePopup(name: string): void {
-            if (name === "bluetooth" || name === "network" || name === "battery") {
+            if (name === "bluetooth" || name === "network" || name === "battery" || name === "audio") {
                 PopupControl.toggle(name, null);
             } else if (name === "launcher") {
                 if (LauncherState.isOpen) {

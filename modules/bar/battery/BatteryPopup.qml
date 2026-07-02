@@ -71,7 +71,16 @@ PanelWindow {
         ScriptAction { script: _closing = false }
     }
 
-    MouseArea { anchors.fill: parent; onClicked: PopupControl.close() }
+    MouseArea {
+        anchors.fill: parent
+        onClicked: function(mouse) {
+            var inside = mouse.x >= card.x && mouse.x <= card.x + card.width &&
+                         mouse.y >= card.y && mouse.y <= card.y + card.height;
+            if (!inside) {
+                PopupControl.close()
+            }
+        }
+    }
 
     Rectangle {
         id: card
