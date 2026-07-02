@@ -25,7 +25,6 @@ Scope {
     Bar { id: mainBar }
     LockScreen { id: lockScreen }
     OsdWindow { barWindow: mainBar }
-    BluetoothNotification { barWindow: mainBar }
     NotificationToast { barWindow: mainBar }
 
     IpcHandler {

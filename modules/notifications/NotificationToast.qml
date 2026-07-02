@@ -1,6 +1,6 @@
-// Compact notification toast for desktop notifications.
-// Shows one notification at a time centered at the bottom of the screen.
-// Dynamic height based on content: summary, body text, and image preview on the right.
+// Compact stacked notification toast system.
+// Manages system notifications and Bluetooth status pill events.
+// Stacks up to 3 cards behind each other, unrolling upwards when hovered.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -11,218 +11,224 @@ import "../../utils"
 import "../../Ui"
 
 Item {
-    id: notificationRoot
+    id: root
 
     property PanelWindow barWindow: null
-    property bool showing: false
-    property var currentNotification: null
+    property var activeNotifications: []
+    property bool stackHovered: false
+    property bool isReady: false
 
-    // Resolve image source from notification: check image, appIcon, and hints
-    readonly property string imageSource: {
-        if (!currentNotification) return "";
-        try {
-            var img = currentNotification.image;
-            if (img && typeof img === "string" &&
-                (img.indexOf("/") === 0 || img.indexOf("file://") === 0 ||
-                 img.indexOf("http://") === 0 || img.indexOf("https://") === 0)) {
-                return img;
-            }
-            var icon = currentNotification.appIcon;
-            if (icon && typeof icon === "string" &&
-                (icon.indexOf("/") === 0 || icon.indexOf("file://") === 0)) {
-                return icon;
-            }
-            var hints = currentNotification.hints;
-            if (hints && typeof hints === "object") {
-                var candidates = [
-                    hints["image-path"],
-                    hints["image_path"],
-                    hints["image"],
-                    hints["app_icon"],
-                    hints["app-icon"]
-                ];
-                for (var i = 0; i < candidates.length; i++) {
-                    var path = candidates[i];
-                    if (path && typeof path === "string" &&
-                        (path.indexOf("/") === 0 || path.indexOf("file://") === 0 ||
-                         path.indexOf("http://") === 0 || path.indexOf("https://") === 0)) {
-                        return path;
-                    }
-                }
-            }
-        } catch(e) {
-            // Silently ignore errors resolving image
-        }
-        return "";
-    }
-
-    readonly property bool hasImage: imageSource.length > 0
-
-    readonly property bool hasBody: {
-        if (!currentNotification) return false;
-        var b = currentNotification.body;
-        return b && b.length > 0;
-    }
-
+    // Startup guard to ignore historical cached notifications on load/reload
     Timer {
-        id: dismissTimer
-        interval: 4000
-        onTriggered: notificationRoot.showing = false
+        id: startupTimer
+        interval: 1000
+        running: true
+        onTriggered: root.isReady = true
     }
 
     Connections {
         target: Notifications.trackedNotifications
         ignoreUnknownSignals: true
         function onValuesChanged() {
+            if (!root.isReady) return
             var list = Notifications.trackedNotifications.values
             if (list.length > 0) {
                 var latest = list[list.length - 1]
                 if (latest) {
-                    notificationRoot.currentNotification = latest
-                    dismissTimer.restart()
-                    notificationRoot.showing = true
+                    // Check if we already have this notification in our activeNotifications
+                    var exists = false
+                    for (var i = 0; i < activeNotifications.length; i++) {
+                        if (activeNotifications[i].id === latest.id) {
+                            exists = true
+                            break
+                        }
+                    }
+                    if (!exists) {
+                        var newNotif = {
+                            id: latest.id,
+                            appName: latest.appName || "Notification",
+                            summary: latest.summary || "",
+                            body: latest.body || "",
+                            image: latest.image || "",
+                            appIcon: latest.appIcon || "",
+                            hints: latest.hints || {},
+                            duration: 6,
+                            isBluetooth: false
+                        }
+                        var arr = activeNotifications.slice()
+                        arr.unshift(newNotif)
+                        activeNotifications = arr
+                    }
                 }
             }
         }
     }
 
-    onShowingChanged: {
-        if (showing) {
+    // Connections to handle Bluetooth connection notifications
+    Connections {
+        target: Bluetooth
+        ignoreUnknownSignals: true
+        property string lastConnectedAddress: ""
+        function onConnectedDeviceChanged() {
+            var dev = Bluetooth.connectedDevice
+            var addr = dev ? dev.address : ""
+            if (addr !== lastConnectedAddress) {
+                lastConnectedAddress = addr
+                if (dev) {
+                    var bat = dev.battery
+                    var batteryText = bat >= 0 ? ("Battery: " + bat + "%") : "Connected"
+                    var btNotif = {
+                        id: "bluetooth_" + addr + "_" + Date.now(),
+                        appName: "Bluetooth",
+                        summary: dev.name || "Bluetooth Device",
+                        body: batteryText,
+                        image: "",
+                        appIcon: "",
+                        hints: {},
+                        duration: 6,
+                        isBluetooth: true
+                    }
+                    var arr = activeNotifications.slice()
+                    arr.unshift(btNotif)
+                    activeNotifications = arr
+                }
+            }
+        }
+    }
+
+    // Timer to decrease duration of active notifications and auto-dismiss them
+    Timer {
+        id: durationTimer
+        interval: 1000
+        repeat: true
+        running: activeNotifications.length > 0 && !root.stackHovered
+        onTriggered: {
+            var updated = []
+            for (var i = 0; i < activeNotifications.length; i++) {
+                var notif = activeNotifications[i]
+                notif.duration -= 1
+                if (notif.duration > 0) {
+                    updated.push(notif)
+                }
+            }
+            activeNotifications = updated
+        }
+    }
+
+    function dismissNotification(index) {
+        if (index >= 0 && index < activeNotifications.length) {
+            var arr = activeNotifications.slice()
+            arr.splice(index, 1)
+            activeNotifications = arr
+        }
+    }
+
+    onActiveNotificationsChanged: {
+        if (activeNotifications.length > 0) {
             if (barWindow) {
                 toastPopup.anchor.window = barWindow
                 toastPopup.anchor.rect = Qt.rect(
-                    barWindow.width / 2 - toastPopup.implicitWidth / 2,
-                    (barWindow.screen ? barWindow.screen.height : 1080) - toastPopup.implicitHeight - 40,
-                    toastPopup.implicitWidth,
-                    toastPopup.implicitHeight
+                    barWindow.width - 400 - 20,
+                    (barWindow.screen ? barWindow.screen.height : 1080) - 500 - 20,
+                    400,
+                    500
                 )
             }
             toastPopup.visible = true
-            enterAnim.start()
         } else {
-            exitAnim.start()
+            toastPopup.visible = false
         }
-    }
-
-    SequentialAnimation {
-        id: enterAnim
-        ParallelAnimation {
-            Anim { target: toastCard; property: "opacity"; from: 0; to: 1; type: Anim.DefaultSpatial }
-            Anim { target: toastTranslate; property: "y"; from: 30; to: 0; type: Anim.DefaultSpatial }
-            Anim { target: toastCard; property: "scale"; from: 0.8; to: 1; type: Anim.DefaultSpatial }
-        }
-    }
-
-    SequentialAnimation {
-        id: exitAnim
-        ParallelAnimation {
-            Anim { target: toastCard; property: "opacity"; from: 1; to: 0; type: Anim.DefaultSpatial }
-            Anim { target: toastTranslate; property: "y"; from: 0; to: 30; type: Anim.DefaultSpatial }
-            Anim { target: toastCard; property: "scale"; from: 1; to: 0.8; type: Anim.DefaultSpatial }
-        }
-        ScriptAction { script: toastPopup.visible = false }
     }
 
     PopupWindow {
         id: toastPopup
         visible: false
         color: "transparent"
-        implicitWidth: notificationRoot.hasImage ? 380 : 300
-        implicitHeight: contentColumn.implicitHeight + 32
+        implicitWidth: 400
+        implicitHeight: 500
         grabFocus: false
 
-        Rectangle {
-            id: toastCard
+        Item {
+            id: container
             anchors.fill: parent
-            color: Color.background
-            radius: 12
-            opacity: 0
-            scale: 0.8
-            clip: true
 
-            transform: Translate {
-                id: toastTranslate
-                y: 30
-            }
-
-            RowLayout {
-                id: contentRow
-                anchors.fill: parent
-                anchors.margins: 12
-                spacing: Style.spacing.md
-
-                // Left side: text content
-                ColumnLayout {
-                    id: contentColumn
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    spacing: Style.spacing.sm
-
-                    // Header Row: Icon + App Name
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Style.spacing.sm
-
-                        Text {
-                            text: Icons.bell
-                            color: Color.accent
-                            font.family: Style.font.family
-                            font.pixelSize: Style.font.heading
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
-                        Text {
-                            text: notificationRoot.currentNotification ? notificationRoot.currentNotification.appName : ""
-                            color: Color.textMuted
-                            font.family: Style.font.family
-                            font.pixelSize: Style.font.body
-                            font.bold: true
-                            elide: Text.ElideRight
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-                    }
-
-                    // Summary (Title)
-                    Text {
-                        text: notificationRoot.currentNotification ? notificationRoot.currentNotification.summary : ""
-                        color: Color.text
-                        font.family: Style.font.family
-                        font.pixelSize: Style.font.subtitle
-                        font.bold: true
-                        wrapMode: Text.Wrap
-                        Layout.fillWidth: true
-                    }
-
-                    // Body text (if present)
-                    Text {
-                        visible: notificationRoot.hasBody
-                        text: notificationRoot.currentNotification ? notificationRoot.currentNotification.body : ""
-                        color: Color.textMuted
-                        font.family: Style.font.family
-                        font.pixelSize: Style.font.body
-                        wrapMode: Text.Wrap
-                        textFormat: Text.RichText
-                        Layout.fillWidth: true
+            Item {
+                id: deckContainer
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: 380
+                height: {
+                    if (root.activeNotifications.length === 0) return 0
+                    if (!isHovered) {
+                        return 160
+                    } else {
+                        var h = card0.implicitHeight
+                        if (root.activeNotifications.length > 1) h += card1.implicitHeight + 8
+                        if (root.activeNotifications.length > 2) h += card2.implicitHeight + 8
+                        return h + 10
                     }
                 }
 
-                // Right side: image preview (if present)
-                Rectangle {
-                    visible: notificationRoot.hasImage
-                    Layout.preferredWidth: 80
-                    Layout.preferredHeight: 80
-                    Layout.maximumHeight: 80
-                    Layout.alignment: Qt.AlignVCenter
-                    radius: 8
-                    color: Color.background
-                    clip: true
+                readonly property bool isHovered: hoverArea.hovered
+                onIsHoveredChanged: root.stackHovered = isHovered
 
-                    Image {
-                        anchors.fill: parent
-                        source: notificationRoot.imageSource
-                        fillMode: Image.PreserveAspectCrop
+                Behavior on height {
+                    NumberAnimation {
+                        duration: Style.anim.expressiveDefaultSpatial
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: Style.anim.expressiveDefaultSpatialCurve
                     }
+                }
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: "#01000000"
+                }
+
+                HoverHandler {
+                    id: hoverArea
+                }
+
+                NotificationCard {
+                    id: card0
+                    visible: root.activeNotifications.length > 0
+                    notificationData: root.activeNotifications.length > 0 ? root.activeNotifications[0] : null
+                    anchors.bottom: parent.bottom
+                    
+                    yOffset: 0
+                    scaleValue: 1.0
+                    opacityValue: 1.0
+                    z: 10
+
+                    onDismissed: root.dismissNotification(0)
+                }
+
+                NotificationCard {
+                    id: card1
+                    visible: root.activeNotifications.length > 1
+                    notificationData: root.activeNotifications.length > 1 ? root.activeNotifications[1] : null
+                    anchors.bottom: parent.bottom
+                    
+                    yOffset: deckContainer.isHovered ? -(card0.implicitHeight + 8) : -8
+                    scaleValue: deckContainer.isHovered ? 1.0 : 0.96
+                    opacityValue: deckContainer.isHovered ? 1.0 : 0.85
+                    z: 9
+
+                    onDismissed: root.dismissNotification(1)
+                }
+
+                NotificationCard {
+                    id: card2
+                    visible: root.activeNotifications.length > 2
+                    notificationData: root.activeNotifications.length > 2 ? root.activeNotifications[2] : null
+                    anchors.bottom: parent.bottom
+                    
+                    yOffset: deckContainer.isHovered ? -(card0.implicitHeight + card1.implicitHeight + 16) : -16
+                    scaleValue: deckContainer.isHovered ? 1.0 : 0.92
+                    opacityValue: deckContainer.isHovered ? 1.0 : 0.70
+                    z: 8
+
+                    onDismissed: root.dismissNotification(2)
                 }
             }
         }
