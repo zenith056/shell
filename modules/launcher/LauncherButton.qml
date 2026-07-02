@@ -18,7 +18,7 @@ Item {
         text: Icons.launcher
         color: LauncherState.isOpen ? Color.textMuted : BarConfig.textColor
         font.family: Style.font.family
-        font.pixelSize: Style.font.indicator
+        font.pixelSize: Style.font.indicator + 2
 
         Behavior on color {
             CAnim { animType: Anim.FastEffects }

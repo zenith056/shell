@@ -64,7 +64,7 @@ QtObject {
     readonly property string link: "\uf0c1"              // nf-fa-link
 
     // Launcher icons
-    readonly property string launcher: "\udb80\udf5c"          // nf-fa-th-large (apps grid)
+    readonly property string launcher: "\udb80\udfc9"          // nf-fa-th-large (apps grid)
     readonly property string search: "\uf002"            // nf-fa-search
     readonly property string bell: "\uf0f3"              // nf-fa-bell
 
