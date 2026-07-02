@@ -17,7 +17,6 @@ PanelWindow {
     property bool _visible: false
 
     implicitWidth: 400
-    implicitHeight: 500
     color: "transparent"
     visible: _visible
     exclusionMode: ExclusionMode.Ignore
@@ -26,7 +25,8 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: LauncherState.isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
-    anchors { top: true; bottom: true; left: true; right: true }
+    anchors { top: false; bottom: true; left: true; right: true }
+    implicitHeight: screen ? screen.height - BarConfig.height : 1000
 
     onVisibleChanged: {
         if (visible) {
@@ -53,15 +53,17 @@ PanelWindow {
         id: enterAnim
         ParallelAnimation {
             Anim { target: card; property: "opacity"; from: 0; to: 1; type: Anim.DefaultEffects }
-            Anim { target: card; property: "y"; from: 6; to: card.cardY; type: Anim.DefaultSpatial }
+            Anim { target: cardTranslate; property: "y"; from: -34; to: 0; type: Anim.DefaultSpatial }
+            Anim { target: card; property: "scale"; from: 0.95; to: 1; type: Anim.DefaultSpatial }
         }
     }
 
     SequentialAnimation {
         id: exitAnim
         ParallelAnimation {
-            Anim { target: card; property: "opacity"; from: 1; to: 0; type: Anim.FastEffects }
-            Anim { target: card; property: "y"; from: card.cardY; to: 6; type: Anim.FastEffects }
+            Anim { target: card; property: "opacity"; from: 1; to: 0; type: Anim.DefaultEffects }
+            Anim { target: cardTranslate; property: "y"; from: 0; to: -34; type: Anim.DefaultSpatial }
+            Anim { target: card; property: "scale"; from: 1; to: 0.95; type: Anim.DefaultSpatial }
         }
         ScriptAction { script: _visible = false }
     }
@@ -126,11 +128,6 @@ PanelWindow {
         id: card
         property real cardWidth: 400
         property real cardHeight: 500
-        property real cardY: {
-            var win = LauncherState.anchorWindow;
-            if (!win) return 40;
-            return win.height + 4;
-        }
 
         x: {
             var btn = LauncherState.anchorButtonItem;
@@ -139,12 +136,26 @@ PanelWindow {
             var pos = btn.mapToItem(win.contentItem, 0, 0);
             return Math.max(8, Math.min(pos.x, parent.width - cardWidth - 8));
         }
-        y: cardY
+        y: 4
         width: cardWidth; height: cardHeight
         color: Color.background; radius: 8
         opacity: 0
+        transformOrigin: Item.Top
 
-        MouseArea { anchors.fill: parent }
+        transform: Translate {
+            id: cardTranslate
+            y: -34
+        }
+
+        HoverHandler {
+            id: cardHover
+            onHoveredChanged: {
+                LauncherState.cardHovered = hovered
+                if (!hovered) {
+                    LauncherState.checkClose()
+                }
+            }
+        }
 
         ColumnLayout {
             anchors.fill: parent; anchors.margins: 16; spacing: 12

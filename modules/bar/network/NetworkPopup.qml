@@ -20,12 +20,12 @@ PanelWindow {
 
     visible: isOpen || _closing
     implicitWidth: 400
-    implicitHeight: 500
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayershell.Overlay
     WlrLayershell.namespace: "network-popup"
     WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
-    anchors { top: true; bottom: true; left: true; right: true }
+    anchors { top: false; bottom: true; left: true; right: true }
+    implicitHeight: screen ? screen.height - BarConfig.height : 1000
     color: "transparent"
 
     onIsOpenChanged: {
@@ -55,15 +55,17 @@ PanelWindow {
         id: enterAnim
         ParallelAnimation {
             Anim { target: card; property: "opacity"; from: 0; to: 1; type: Anim.DefaultEffects }
-            Anim { target: card; property: "y"; from: 6; to: PopupControl.barHeight + 4; type: Anim.DefaultSpatial }
+            Anim { target: cardTranslate; property: "y"; from: -34; to: 0; type: Anim.DefaultSpatial }
+            Anim { target: card; property: "scale"; from: 0.95; to: 1; type: Anim.DefaultSpatial }
         }
     }
 
     SequentialAnimation {
         id: exitAnim
         ParallelAnimation {
-            Anim { target: card; property: "opacity"; from: 1; to: 0; type: Anim.FastEffects }
-            Anim { target: card; property: "y"; from: PopupControl.barHeight + 4; to: 6; type: Anim.FastEffects }
+            Anim { target: card; property: "opacity"; from: 1; to: 0; type: Anim.DefaultEffects }
+            Anim { target: cardTranslate; property: "y"; from: 0; to: -34; type: Anim.DefaultSpatial }
+            Anim { target: card; property: "scale"; from: 1; to: 0.95; type: Anim.DefaultSpatial }
         }
         ScriptAction { script: _closing = false }
     }
@@ -74,10 +76,26 @@ PanelWindow {
         id: card
         width: 380; height: 520
         x: Math.max(8, Math.min(PopupControl.anchorX + PopupControl.anchorWidth - width, parent.width - width - 8))
-        y: PopupControl.barHeight + 4
+        y: 4
         color: Color.background; radius: 8
         clip: true
         opacity: 0
+        transformOrigin: Item.Top
+
+        transform: Translate {
+            id: cardTranslate
+            y: -34
+        }
+
+        HoverHandler {
+            id: cardHover
+            onHoveredChanged: {
+                PopupControl.cardHovered = hovered
+                if (!hovered) {
+                    PopupControl.checkClose()
+                }
+            }
+        }
 
         Keys.onEscapePressed: PopupControl.close()
         Keys.onPressed: function(event) {

@@ -28,7 +28,16 @@ Item {
 
     MouseArea {
         anchors.fill: parent
+        hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: PopupControl.toggle("battery", battery)
+        onEntered: {
+            PopupControl.indicatorHovered = true
+            PopupControl.open("battery", battery)
+        }
+        onExited: {
+            PopupControl.indicatorHovered = false
+            PopupControl.checkClose()
+        }
     }
 }

@@ -4,7 +4,7 @@ import QtQuick
 import "../../Commons"
 import "../../services"
 import "../../utils"
-import "audio"
+
 
 Item {
     id: audioIndicator
@@ -20,14 +20,6 @@ Item {
         font.pixelSize: Style.font.title
     }
 
-    Connections {
-        target: Audio
-        function onVolumeChanged() {
-            audioPopup.showing = true
-        }
-    }
 
-    AudioPopup {
-        id: audioPopup
-    }
+
 }

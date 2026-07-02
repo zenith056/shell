@@ -7,3 +7,5 @@ singleton Workspaces 1.0 Workspaces.qml
 singleton PowerProfile 1.0 PowerProfile.qml
 singleton Bluetooth 1.0 Bluetooth.qml
 singleton AppLauncherService 1.0 AppLauncherService.qml
+singleton Brightness 1.0 Brightness.qml
+singleton OsdControl 1.0 OsdControl.qml

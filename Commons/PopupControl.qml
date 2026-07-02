@@ -5,7 +5,9 @@ pragma Singleton
 import Quickshell
 import QtQuick
 
-QtObject {
+Item {
+    id: root
+
     property string activePopup: ""
     property real anchorX: 0
     property real anchorWidth: 0
@@ -16,9 +18,27 @@ QtObject {
     property Item networkIndicator: null
     property Item batteryIndicator: null
 
+    property bool cardHovered: false
+    property bool indicatorHovered: false
+
+    Timer {
+        id: closeTimer
+        interval: 150 // 150ms delay is responsive but allows crossing the gap
+        onTriggered: {
+            if (!cardHovered && !indicatorHovered) {
+                close()
+            }
+        }
+    }
+
+    function checkClose() {
+        closeTimer.restart()
+    }
+
     function open(name, triggerItem) {
         if (triggerItem) updateAnchor(triggerItem)
         activePopup = name
+        closeTimer.stop()
     }
 
     function close() {

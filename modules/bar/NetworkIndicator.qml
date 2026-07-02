@@ -28,7 +28,16 @@ Item {
 
     MouseArea {
         anchors.fill: parent
+        hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: PopupControl.toggle("network", network)
+        onEntered: {
+            PopupControl.indicatorHovered = true
+            PopupControl.open("network", network)
+        }
+        onExited: {
+            PopupControl.indicatorHovered = false
+            PopupControl.checkClose()
+        }
     }
 }

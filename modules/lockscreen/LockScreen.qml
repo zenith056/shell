@@ -12,20 +12,20 @@ Scope {
     id: root
 
     property bool isLocked: false
+    property bool animateUnlock: false
     property string errorMessage: ""
 
     // Initiate locking sequence and start PAM session
     function lock() {
         isLocked = true
+        animateUnlock = false
         lockObject.locked = true
         errorMessage = ""
     }
 
-    // Initiate unlocking sequence
+    // Initiate unlocking sequence (triggers exit animation first)
     function unlock() {
-        isLocked = false
-        lockObject.locked = false
-        errorMessage = ""
+        animateUnlock = true
     }
 
     // Timer to clear the error message after 2 seconds
@@ -48,6 +48,17 @@ Scope {
             FocusScope {
                 anchors.fill: parent
                 focus: true
+
+                // Connect to root to listen for the unlock animation trigger
+                Connections {
+                    target: root
+                    ignoreUnknownSignals: true
+                    function onAnimateUnlockChanged() {
+                        if (root.animateUnlock) {
+                            fadeOutAnim.start()
+                        }
+                    }
+                }
 
                 // PAM authentication context declared inside FocusScope for direct UI access
                 PamContext {
@@ -74,6 +85,11 @@ Scope {
                     anchors.centerIn: parent
                     spacing: 16
                     opacity: 0
+
+                    transform: Translate {
+                        id: contentTranslate
+                        y: 40
+                    }
 
                     // Huge digital clock
                     Text {
@@ -173,6 +189,19 @@ Scope {
                     }
                 }
 
+                // Global mouse blocker and cursor blanker overlay
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.BlankCursor
+                    acceptedButtons: Qt.AllButtons
+                    onPressed: (mouse) => mouse.accepted = true
+                    onReleased: (mouse) => mouse.accepted = true
+                    onClicked: (mouse) => mouse.accepted = true
+                    onDoubleClicked: (mouse) => mouse.accepted = true
+                    onWheel: (wheel) => wheel.accepted = true
+                }
+
                 // Helper to update clock texts
                 function updateTime() {
                     var now = new Date()
@@ -200,16 +229,31 @@ Scope {
                     pwInput.forceActiveFocus()
                     pam.start()
                 }
-            }
 
-            // Smooth fade-in animation on lock screen creation
-            NumberAnimation {
-                id: fadeInAnim
-                target: contentColumn
-                property: "opacity"
-                from: 0
-                to: 1
-                duration: 300
+                // Smooth fade-in animation on lock screen creation
+                ParallelAnimation {
+                    id: fadeInAnim
+                    Anim { target: contentColumn; property: "opacity"; from: 0; to: 1; type: Anim.DefaultSpatial }
+                    Anim { target: contentTranslate; property: "y"; from: 40; to: 0; type: Anim.DefaultSpatial }
+                    Anim { target: contentColumn; property: "scale"; from: 0.95; to: 1; type: Anim.DefaultSpatial }
+                }
+
+                // Smooth fade-out animation on lock screen unlock
+                SequentialAnimation {
+                    id: fadeOutAnim
+                    ParallelAnimation {
+                        Anim { target: contentColumn; property: "opacity"; from: 1; to: 0; type: Anim.DefaultSpatial }
+                        Anim { target: contentTranslate; property: "y"; from: 0; to: 40; type: Anim.DefaultSpatial }
+                        Anim { target: contentColumn; property: "scale"; from: 1; to: 0.95; type: Anim.DefaultSpatial }
+                    }
+                    ScriptAction {
+                        script: {
+                            root.isLocked = false
+                            lockObject.locked = false
+                            root.errorMessage = ""
+                        }
+                    }
+                }
             }
         }
     }

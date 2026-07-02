@@ -38,6 +38,7 @@ Item {
 
     MouseArea {
         anchors.fill: parent
+        hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: {
             clickAnim.restart()
@@ -46,6 +47,16 @@ Item {
             } else {
                 LauncherState.show(launcherButton, launcherButton.barWindow);
             }
+        }
+        onEntered: {
+            LauncherState.indicatorHovered = true
+            if (!LauncherState.isOpen) {
+                LauncherState.show(launcherButton, launcherButton.barWindow);
+            }
+        }
+        onExited: {
+            LauncherState.indicatorHovered = false
+            LauncherState.checkClose()
         }
     }
 }

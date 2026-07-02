@@ -10,6 +10,7 @@ import "modules/launcher/launcher"
 import "modules/bar/battery"
 import "modules/bar/bluetooth"
 import "modules/bar/network"
+import "modules/bar/audio"
 import "modules/lockscreen"
 
 Scope {
@@ -19,8 +20,9 @@ Scope {
     BatteryPopup { }
     BluetoothPopup { }
     NetworkPopup { }
-    Bar { }
+    Bar { id: mainBar }
     LockScreen { id: lockScreen }
+    OsdWindow { barWindow: mainBar }
 
     IpcHandler {
         target: "shell"

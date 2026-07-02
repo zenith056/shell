@@ -32,7 +32,16 @@ Item {
 
     MouseArea {
         anchors.fill: parent
+        hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: PopupControl.toggle("bluetooth", bluetooth)
+        onEntered: {
+            PopupControl.indicatorHovered = true
+            PopupControl.open("bluetooth", bluetooth)
+        }
+        onExited: {
+            PopupControl.indicatorHovered = false
+            PopupControl.checkClose()
+        }
     }
 }

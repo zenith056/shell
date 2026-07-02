@@ -67,6 +67,9 @@ QtObject {
     readonly property string launcher: "\udb80\udf5c"          // nf-fa-th-large (apps grid)
     readonly property string search: "\uf002"            // nf-fa-search
 
+    // Brightness icons
+    readonly property string brightness: "\udb80\udce0"        // nf-md-brightness_6
+
     // Returns volume icon based on level
     function volumeIcon(muted: bool, volume: real): string {
         if (muted || volume === 0) return volumeOff;
