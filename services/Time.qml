@@ -19,9 +19,6 @@ Singleton {
 
     // Reactive time and date properties
     readonly property string time: formattedTime()
-    readonly property string date: formattedDate()
-    readonly property int hour: clock.hours
-    readonly property int minute: clock.minutes
 
     // Returns formatted time based on current format setting
     function formattedTime(): string {
@@ -29,11 +26,6 @@ Singleton {
             return Qt.formatDateTime(clock.date, "HH:mm")
         }
         return Qt.formatDateTime(clock.date, "h:mm AP")
-    }
-
-    // Returns formatted date (e.g., "Mon Jun 28")
-    function formattedDate(): string {
-        return Qt.formatDateTime(clock.date, "ddd MMM d")
     }
 
     // Returns expanded date for click display (e.g., "Monday - 06/28/26")

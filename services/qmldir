@@ -9,3 +9,4 @@ singleton Bluetooth 1.0 Bluetooth.qml
 singleton AppLauncherService 1.0 AppLauncherService.qml
 singleton Brightness 1.0 Brightness.qml
 singleton OsdControl 1.0 OsdControl.qml
+singleton Notifications 1.0 Notifications.qml

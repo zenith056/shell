@@ -6,7 +6,6 @@ import Quickshell.Wayland
 import Quickshell.Services.Pam
 import "../../Commons"
 import "../../Ui"
-import "../../utils"
 
 Scope {
     id: root

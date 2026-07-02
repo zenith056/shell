@@ -13,11 +13,7 @@ Singleton {
     readonly property color text: ConfigLoader.themeText
     readonly property color textMuted: ConfigLoader.themeTextMuted
     readonly property color divider: ConfigLoader.themeDivider
-    readonly property color foreground: ConfigLoader.themeText
-    readonly property color muted: ConfigLoader.themeTextMuted
     readonly property color hover: "#2a2a2a"
-    readonly property color overlay: ConfigLoader.themeSurface
-    readonly property color border: ConfigLoader.themeDivider
 
     // Workspace indicators
     readonly property color activeWorkspace: "#ffffff"

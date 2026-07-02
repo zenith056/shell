@@ -1,10 +1,5 @@
 module qs.Ui
-singleton PanelController 1.0 PanelController.qml
 Anim 1.0 Anim.qml
 CAnim 1.0 CAnim.qml
-AnimLoader 1.0 AnimLoader.qml
-PopupCard 1.0 PopupCard.qml
-Toggle 1.0 Toggle.qml
-PanelHero 1.0 PanelHero.qml
 PanelSectionHeader 1.0 PanelSectionHeader.qml
 PanelSeparator 1.0 PanelSeparator.qml

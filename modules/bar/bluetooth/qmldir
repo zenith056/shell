@@ -1,2 +1,3 @@
 module qs.modules.bar.bluetooth
 BluetoothPopup 1.0 BluetoothPopup.qml
+BluetoothNotification 1.0 BluetoothNotification.qml

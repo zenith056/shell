@@ -66,6 +66,7 @@ QtObject {
     // Launcher icons
     readonly property string launcher: "\udb80\udf5c"          // nf-fa-th-large (apps grid)
     readonly property string search: "\uf002"            // nf-fa-search
+    readonly property string bell: "\uf0f3"              // nf-fa-bell
 
     // Brightness icons
     readonly property string brightness: "\udb80\udce0"        // nf-md-brightness_6

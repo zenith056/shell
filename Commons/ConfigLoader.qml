@@ -10,11 +10,6 @@ Singleton {
 
     property var raw: ({})
 
-    // Bar config
-    readonly property string barPosition: Util.get(raw, "bar.position", "top")
-    readonly property int barHeight: Util.get(raw, "bar.height", 32)
-    readonly property var barLayout: Util.get(raw, "bar.layout", {})
-
     // Theme config
     readonly property color themeBackground: Util.get(raw, "theme.background", "#000000")
     readonly property color themeSurface: Util.get(raw, "theme.surface", "#1a1a1a")
@@ -37,8 +32,6 @@ Singleton {
     readonly property int fontIconLarge: Util.get(raw, "fonts.iconLarge", 40)
 
     // Plugin config
-    readonly property var pluginConfig: Util.get(raw, "plugins", ({}))
-
     property string _configPath: Qt.resolvedUrl("../shell.json").toString().replace("file://", "")
 
     FileView {
@@ -60,13 +53,5 @@ Singleton {
         } catch (e) {
             console.log("ConfigLoader: failed to parse shell.json:", e)
         }
-    }
-
-    function isPluginEnabled(pluginId) {
-        return Util.get(pluginConfig, pluginId, false) === true
-    }
-
-    function getBarWidgets(position) {
-        return Util.get(barLayout, position, [])
     }
 }

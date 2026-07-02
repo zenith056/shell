@@ -11,10 +11,6 @@ Singleton {
         return value !== null && typeof value === "object" && !Array.isArray(value)
     }
 
-    function deepClone(obj) {
-        return JSON.parse(JSON.stringify(obj))
-    }
-
     function get(obj, path, fallback) {
         var parts = path.split(".")
         var current = obj

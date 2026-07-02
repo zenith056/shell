@@ -11,7 +11,6 @@ Item {
     property string activePopup: ""
     property real anchorX: 0
     property real anchorWidth: 0
-    property real barHeight: 32
 
     // Stored references to bar indicators for IPC-triggered popups
     property Item bluetoothIndicator: null

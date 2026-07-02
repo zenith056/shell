@@ -17,6 +17,6 @@ Text {
     text: ""
 
     Behavior on color {
-        ColorAnimation { duration: Style.anim.fastEffects; easing.type: Easing.BezierSpline; easing.bezierCurve: Style.anim.bezierEffects }
+        ColorAnimation { duration: Style.anim.expressiveFastEffects; easing.type: Easing.BezierSpline; easing.bezierCurve: Style.anim.expressiveFastEffectsCurve }
     }
 }

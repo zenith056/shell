@@ -1,0 +1,2 @@
+module qs.modules.notifications
+NotificationToast 1.0 NotificationToast.qml

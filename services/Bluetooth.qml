@@ -72,21 +72,11 @@ Singleton {
     // Track last error message
     property string lastError: ""
 
-    // Helper to clear error after a short delay
-    function clearPending(error: string): void {
-        root.lastError = error;
-        errorClearTimer.restart();
-    }
-
     Timer {
         id: errorClearTimer
         interval: 4000
         onTriggered: root.lastError = ""
     }
-
-    // No-op compatibility functions for legacy calls
-    function refreshAvailable(): void {}
-    function refreshPaired(): void {}
 
     // Toggle Bluetooth power state
     function toggle(): void {

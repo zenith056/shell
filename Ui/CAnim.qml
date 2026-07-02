@@ -18,7 +18,12 @@ ColorAnimation {
     }
 
     function _applyCurve() {
-        var c = Style.anim.expressiveSlowEffectsCurve
+        var c = Style.anim.expressiveDefaultEffectsCurve
+        if (animType === Anim.FastEffects) {
+            c = Style.anim.expressiveFastEffectsCurve
+        } else if (animType === Anim.SlowEffects) {
+            c = Style.anim.expressiveSlowEffectsCurve
+        }
         if (c && c.length === 4) {
             easing.type = Easing.BezierSpline
             easing.bezierCurve = c

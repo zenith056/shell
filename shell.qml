@@ -12,6 +12,7 @@ import "modules/bar/bluetooth"
 import "modules/bar/network"
 import "modules/bar/audio"
 import "modules/lockscreen"
+import "modules/notifications"
 
 Scope {
     id: root
@@ -23,6 +24,8 @@ Scope {
     Bar { id: mainBar }
     LockScreen { id: lockScreen }
     OsdWindow { barWindow: mainBar }
+    BluetoothNotification { barWindow: mainBar }
+    NotificationToast { barWindow: mainBar }
 
     IpcHandler {
         target: "shell"

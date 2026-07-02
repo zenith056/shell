@@ -1,3 +1,2 @@
 module Utils
-singleton Paths 1.0 Paths.qml
 singleton Icons 1.0 Icons.qml

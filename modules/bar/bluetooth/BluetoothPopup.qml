@@ -31,7 +31,6 @@ PanelWindow {
 
     onIsOpenChanged: {
         if (isOpen) {
-            Bluetooth.refreshAvailable()
             deviceIndex = -1; cursorActive = false
             pendingRemoveAddress = ""; pendingRemoveName = ""
             _closing = false
